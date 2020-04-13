@@ -16,6 +16,7 @@ import md5 from 'js-md5';
 import $ from 'jquery'
 import htmlToPdf from "./util/htmlToPdf";
 import Print from 'vue-print-nb'
+import echarts from 'echarts'
 // main.js是我们的入口文件，主要作用是初始化vue实例，并引入所需要的插件
 Vue.config.productionTip = false;
 //新添加
@@ -29,7 +30,7 @@ Vue.prototype.$qs = qs;
 
 //axios配置
 
-//响应时间 30秒
+//响应时间 30秒 请求后30秒还没有响应就放弃此次请求
 axios.defaults.timeout = 30000;
 axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 

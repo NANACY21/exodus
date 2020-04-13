@@ -1,0 +1,70 @@
+{
+    "options": [{
+        "value": "黑龙江省",
+        "label": "黑龙江省",
+        "children": [{
+            "value": "哈尔滨市",
+            "label": "哈尔滨市"
+        }, {
+            "value": "齐齐哈尔市",
+            "label": "齐齐哈尔市"
+        },{
+            "value": "大庆市",
+            "label": "大庆市"
+        }]
+    },{
+        "value": "辽宁省",
+        "label": "辽宁省",
+        "children": [{
+            "value": "大连市",
+            "label": "大连市"
+        }]
+    },{
+        "value": "北京市",
+        "label": "北京市"
+    },{
+        "value": "上海市",
+        "label": "上海市"
+    },{
+        "value": "天津市",
+        "label": "天津市"
+    },{
+        "value": "浙江省",
+        "label": "浙江省",
+        "children": [{
+            "value": "杭州市",
+            "label": "杭州市"
+        }]
+    },{
+        "value": "广东省",
+        "label": "广东省",
+        "children": [{
+            "value": "广州市",
+            "label": "广州市"
+        },{
+            "value": "深圳市",
+            "label": "深圳市"
+        }]
+    },{
+        "value": "福建省",
+        "label": "福建省",
+        "children": [{
+            "value": "厦门市",
+            "label": "厦门市"
+        }]
+    },{
+        "value": "四川省",
+        "label": "四川省",
+        "children": [{
+            "value": "成都市",
+            "label": "成都市"
+        }]
+    },{
+        "value": "山东省",
+        "label": "山东省",
+        "children": [{
+            "value": "威海市",
+            "label": "威海市"
+        }]
+    }]
+}

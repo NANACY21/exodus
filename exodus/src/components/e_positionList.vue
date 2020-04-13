@@ -1,34 +1,44 @@
-<!--职位列表 使用场景：企业版用户查看职位列表、用户版用户的投递箱-->
+<!--职位列表
+使用场景：
+企业版用户查看职位列表
+用户版用户的投递箱-->
 <template>
     <div>
         <el-container>
             <!--头部 每个页面都包含头部子组件-->
-            <el-header>
+            <el-header height="100px">
                 <component :is="headerComponent"/>
             </el-header>
             <el-main>
-                <el-row v-show="!control.e_">
-                    <el-col :span="24">
-                        <el-steps :active="1" finish-status="success" simple style="margin-top: 20px">
-                            <el-step @click.native="postStep('投递成功')" title="投递成功"></el-step>
-                            <el-step @click.native="postStep('被查看')" title="被查看"></el-step>
-                            <el-step @click.native="postStep('待沟通')" title="待沟通"></el-step>
-                            <el-step @click.native="postStep('邀请面试')" title="邀请面试"></el-step>
-                            <el-step @click.native="postStep('不合适')" title="不合适"></el-step>
-                            <el-step @click.native="postStep('删除记录')" title="删除记录"></el-step>
+                <el-row v-show="!control.e_" class="userPostList" title="已投递简历状态">
+                    <el-col :span="11" offset="10">
+                        <el-steps :active="currentStep" finish-status="success" simple style="margin-top: 20px">
+                            <el-step @click.native="postStep(1)" title="投递成功"/>
+                            <el-step @click.native="postStep(2)" title="被查看"/>
+                            <el-step @click.native="postStep(3)" title="待沟通"/>
+                            <el-step @click.native="postStep(4)" title="邀请面试"/>
                         </el-steps>
+                    </el-col>
+                    <el-col :span="3">
+                        <el-button-group style="margin-top: 20px">
+                            <el-button @click="postStep(-1)" title="招聘者认为你不合适" type="danger">不合适</el-button>
+                            <el-button @click="postStep(0)" title="求职者手动删的" type="warning">删除记录</el-button>
+                        </el-button-group>
                     </el-col>
                 </el-row>
                 <el-row>
-                    <el-col v-show="control.e_" :span="1.5" offset="16">
+                    <el-col v-show="control.e_" :span="2" offset="16">
                         <el-dropdown>
                             <el-button plain type="success">
-                                {{this.filterItem}}<i class="el-icon-arrow-down el-icon--right"></i>
+                                {{this.filterItem}}
+                                <i class="el-icon-arrow-down el-icon--right"/>
                             </el-button>
                             <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item @click.native="filterPositionList('all')" title="公司已新增的职位">全部</el-dropdown-item>
-                                <el-dropdown-item @click.native="filterPositionList('release')" title="公司已发布的职位">已发布</el-dropdown-item>
-                                <el-dropdown-item @click.native="filterPositionList('has')">有投递</el-dropdown-item>
+                                <el-dropdown-item v-for="item in filter_web" @click.native="filterPositionList(item)"
+                                                  :title="'公司'+item+'的职位'"
+                                                  :key="item">
+                                    {{item}}
+                                </el-dropdown-item>
                             </el-dropdown-menu>
                         </el-dropdown>
                     </el-col>
@@ -39,10 +49,19 @@
                         </el-button-group>
                     </el-col>
                     <el-col :span="3">
-                        <el-input suffix-icon="el-icon-search" @keyup.enter.native="" placeholder="职位名称"></el-input>
+                        <!--搜索时模糊匹配-->
+                        <el-autocomplete
+                            prefix-icon="el-icon-search"
+                            placeholder="职位名称"
+                            :trigger-on-focus="false"
+                            v-model="search_content"
+                            @keyup.enter.native="searchPosition"
+                            :fetch-suggestions="querySearch"
+                            @select="handleSelect"/>
                     </el-col>
                 </el-row>
                 <el-table
+                    border
                     v-loading="loading"
                     ref="positionList"
                     :data="positionList"
@@ -50,7 +69,7 @@
                     @cell-mouse-leave="atLeave"
                     tooltip-effect="dark"
                     style="width: 100%"
-                    row-style="height:80px"
+                    row-style="height:70px"
                     :cell-style="addStyle"
                     @selection-change="handleSelectionChange">
                     <el-table-column
@@ -60,7 +79,7 @@
                     <el-table-column
                         :show-overflow-tooltip="true"
                         label="职位名称"
-                        width="110">
+                        width="108">
                         <template slot-scope="scope">
                             <el-link @click="seePosition(scope.$index, scope.row)" :underline="false">{{ scope.row.name }}</el-link>
                         </template>
@@ -69,64 +88,104 @@
                         :show-overflow-tooltip="true"
                         prop="detail"
                         label="职位详情"
-                        width="110">
+                        width="108">
                     </el-table-column>
                     <el-table-column
-                        :show-overflow-tooltip="true"
-                        prop="city"
-                        label="工作地点"
-                        width="110">
+                        width="108">
+                        <template slot-scope="scope">
+                            <div>
+                                <el-popover
+                                    placement="right"
+                                    width="400"
+                                    trigger="click">
+                                    <el-table :data="cityAndNum">
+                                        <el-table-column width="200" property="city" label="城市"></el-table-column>
+                                        <el-table-column width="200" property="num" label="需求人数"></el-table-column>
+                                    </el-table>
+                                    <el-button type="text" slot="reference" @click="getCityAndNum(scope.$index)">工作地点</el-button>
+                                </el-popover>
+                            </div>
+                        </template>
                     </el-table-column>
                     <el-table-column
                         prop="workExp"
                         label="工作经验"
-                        width="110">
+                        width="108">
                     </el-table-column>
                     <el-table-column
                         prop="eduBg"
                         label="学历"
-                        width="110">
+                        width="108">
                     </el-table-column>
                     <el-table-column
                         prop="salary"
                         label="最高月薪"
-                        width="110">
+                        width="108">
                     </el-table-column>
                     <el-table-column
                         prop="salaryFloat"
                         label="月薪浮动"
-                        width="110">
+                        width="108">
                     </el-table-column>
                     <el-table-column
                         prop="worktype"
                         label="工作性质"
-                        width="110">
+                        width="108">
                     </el-table-column>
                     <el-table-column
                         prop="faceto"
                         label="校招/社招"
-                        width="110">
+                        width="108">
                     </el-table-column>
                     <el-table-column
                         prop="status"
                         label="状态"
-                        width="110">
+                        width="108">
                     </el-table-column>
                     <el-table-column>
                         <template slot-scope="scope">
-                            <div>
+                            <div style="text-align: right">
                                 <el-button-group>
-                                    <el-button plain v-show="scope.row.del && control.e_" @click="editPosition(scope.$index, scope.row)" type="primary" title="编辑该职位" icon="el-icon-edit">编辑</el-button>
-                                    <el-button plain v-show="scope.row.del" @click="delPosition(scope.$index, scope.row)" type="danger" title="删除该职位" icon="el-icon-delete">删除</el-button>
-                                    <el-button plain v-show="scope.row.del && control.e_" @click="releasePosition(scope.$index, scope.row)" type="success" title="发布该职位" icon="el-icon-s-promotion">发布</el-button>
-                                    <el-button plain v-show="scope.row.del && control.e_" @click="withdrawPosition(scope.$index, scope.row)" type="warning" title="撤回该职位" icon="el-icon-refresh-left">撤回</el-button>
+                                    <el-button size="small" plain v-show="scope.row.del && control.e_"
+                                               @click="editPosition(scope.$index, scope.row)" type="primary"
+                                               title="编辑该职位" icon="el-icon-edit">
+                                        编辑
+                                    </el-button>
+                                    <el-button size="small" plain v-show="scope.row.del"
+                                               @click="delPosition(scope.$index, scope.row)" type="danger" title="删除该职位"
+                                               icon="el-icon-delete">
+                                        删除
+                                    </el-button>
+                                    <el-button size="small" plain v-show="scope.row.del && control.e_"
+                                               @click="changePositionStatus(scope.$index, scope.row,1)" type="success"
+                                               title="发布该职位" icon="el-icon-s-promotion">
+                                        发布
+                                    </el-button>
+                                    <el-button size="small" plain v-show="scope.row.del && control.e_"
+                                               @click="changePositionStatus(scope.$index, scope.row,0)" type="warning"
+                                               title="撤回（下线）该职位" icon="el-icon-refresh-left">
+                                        撤回
+                                    </el-button>
                                 </el-button-group>
                             </div>
                         </template>
                     </el-table-column>
                 </el-table>
+                <el-pagination
+                    style="clear: both"
+                    :title="pageBean.tip"
+                    @size-change="handleSizeChange"
+                    @current-change="handleCurrentChange"
+                    :current-page="pageBean.currentPage"
+                    :page-sizes="pageBean.pageSize_web"
+                    :page-size="pageBean.pageSize"
+                    background
+                    layout="total, sizes, prev, pager, next, jumper"
+                    :total="pageBean.currentListLength">
+                </el-pagination>
             </el-main>
             <el-footer>
+                <component :is="footerComponent"/>
             </el-footer>
         </el-container>
     </div>
@@ -134,6 +193,7 @@
 
 <script>
     // 引入组件
+    import u_footer from "./subComponents/u_footer";
     const loginURL = '/isLogged';
     //字符
     const ch = '#';
@@ -143,60 +203,60 @@
         // 注册组件
         components: {
             backTop,
-            "u_header": u_header
+            "u_header": u_header,
+            "u_footer": u_footer
         },
         name: "e_positionList",
         mounted() {
             let _this = this;
-            let url;
-            //向后端发的数据
-            let data;
+            _this.commitData.currentPage = _this.pageBean.currentPage;
+            _this.commitData.pageSize = _this.pageBean.pageSize;
+            //接收的数据
+            let action = _this.$route.query.action;
             //用户版用户访问该页面
-            if (_this.$route.query.action == 'u_see') {
-                _this.userId = _this.$route.query.userId;
-                url = '/postList';
-                data = _this.userId;
+            if (action == 'u_see') {
+                // 用户id
+                _this.commitData.id = _this.$route.query.userId;
+                _this.loadUrl = '/postList';
                 //控制
                 _this.control.e_ = false;
                 _this.control.offset = 18;
-                _this.companyId = '';
             }
             //企业版用户访问该页面
-            else if (_this.$route.query.action == 'e_see') {
-                _this.companyId = _this.$route.query.companyId;
-                url = '/getPositionList';
-                data = _this.companyId;
-                _this.userId = '';
+            else if (action == 'e_see') {
+                // 公司id
+                _this.commitData.id = _this.$route.query.companyId;
+                _this.loadUrl = '/getPositionList';
+                //我公司职位名称列表
+                _this.$ajax.post('/positionNameList', _this.commitData, {emulateJSON: true}).then((res) => {
+                    let temp = res.data;
+                    _this.positionNameList = [];
+                    for (let i = 0; i < temp.length; i++) {
+                        _this.positionNameList.push({
+                            value: temp[i]
+                        });
+                    }
+                });
             }
-            _this.$ajax.post(url, data, {emulateJSON: true}).then((res) => {
-                console.log('后端数据：');
-                console.log(res.data);
-                _this.positionList = res.data;
-                //数据处理
-                for (var i = 0; i < _this.positionList.length; i++) {
-                    //城市数组
-                    let cityArray = _this.positionList[i].city.split(ch);
-                    //需求人数数组
-                    let numArray = _this.positionList[i].needNum.split(ch);
-                    _this.positionList[i].city = '';
-                    for (var j = 0; j < cityArray.length; j++) {
-                        if (cityArray[j] != '') {
-                            _this.positionList[i].city = _this.positionList[i].city + cityArray[j] + '(' + numArray[j] + ')';
-                        }
-                    }
-                    if (_this.positionList[i].status == '0') {
-                        _this.positionList[i].status = '未发布';
-                    } else if (_this.positionList[i].status == '1') {
-                        _this.positionList[i].status = '已发布';
-                    }
-                    _this.positionList[i].del = false;
-                }
-                _this.loading = false;
-            });
+            _this.whenMountedRequestLength();
+            _this.whenMountedRequest();
         },
-
+        watch: {
+            search_content: {
+                handler: function (newVal, oldVal) {
+                    let _this = this;
+                    if (newVal.length == 0) {
+                        console.log('搜索框' + newVal);
+                        _this.whenMountedRequestLength();
+                        _this.whenMountedRequest();
+                    }
+                }
+            }
+        },
         data() {
             return {
+                //搜索内容
+                search_content: '',
                 //不同使用场景的页面控制
                 control: {
                     //当前该列表是否为企业版
@@ -204,68 +264,105 @@
                     //间隔
                     offset: 0,
                 },
+                //头部组件
                 headerComponent: 'u_header',
-                //用户id
-                userId: '',
-                //公司id
-                companyId: '',
+                //底部组件
+                footerComponent: 'u_footer',
                 //职位列表
                 positionList: [],
+                //职位名称列表
+                positionNameList: [{value: ''}],
+                //工作地点 该地点需求人数内存前端数据结构
+                cityAndNum: [{
+                    //工作地点
+                    city: '',
+                    //该地点需求人数
+                    num: '',
+                }],
                 // 职位列表表格复选框选中的
                 multipleSelection: [],
                 //表格加载数据
                 loading: true,
                 //过滤职位列表
-                filterItem: '全部'
+                filterItem: '全部',
+                //过滤职位选项
+                filter_web: ['全部', '已发布', '有投递'],
+                //步骤条当前步骤
+                currentStep: 1,
+                //分页相关
+                pageBean: {
+                    //供选择的每页规格条数
+                    pageSize_web: [5, 50, 100, 200],
+                    //悬停在分页上时
+                    tip: '',
+                    //当前列表总长度
+                    currentListLength: '',
+                    //默认的当前页
+                    currentPage: 1,
+                    //默认的每页显示的条数
+                    pageSize: 5
+                },
+                //mount 加载该页面时请求的地址
+                loadUrl: '',
+                //mount 加载该页面时提交的数据 向后端发的数据 发送到后端的数据
+                commitData: {
+                    //用户id 或 公司id
+                    id: '',
+                    currentPage: '',
+                    pageSize: '',
+                    //职位状态 为空 代表查询所有职位
+                    status: '',
+                    //投递状态（求职者版）
+                    postStatus: 0
+                }
             };
         },
         methods: {
+            //搜索职位 只有回车才发请求
+            searchPosition() {
+                let _this = this;
+                if (_this.commitData.id == '') {
+                    return;
+                }
+                let map = {"searchContent": _this.search_content, "companyId": _this.commitData.id};
+                _this.$ajax.post('/searchPosition', map, {emulateJSON: true}).then((res) => {
+                    _this.positionList = res.data;
+                    _this.positionListProcess();
+                });
+            },
+            //获取该职位的工作地点及其人数
+            getCityAndNum(index) {
+                let _this = this;
+                _this.cityAndNum = [];
+                console.log(index);
+                //城市数组
+                let cityArray = _this.positionList[index].city.split(ch);
+                //需求人数数组
+                let numArray = _this.positionList[index].needNum.split(ch);
+                for (let i = 0; i < cityArray.length; i++) {
+                    if (cityArray[i] != '') {
+                        _this.cityAndNum.push({
+                            city: cityArray[i],
+                            num: numArray[i]
+                        });
+                    }
+                }
+            },
             //企业版-该公司已发布的职位列表
             filterPositionList(filterArg) {
-                console.log(filterArg);
                 let _this = this;
-                if (filterArg == 'all') {
-                    console.log('全部职位');
-                    _this.filterItem = '全部';
-                    _this.$ajax.post('/getPositionList', _this.companyId, {emulateJSON: true}).then((res) => {
-                        console.log('后端数据：');
-                        console.log(res.data);
-                        _this.positionList = res.data;
-                        //数据处理
-                        for (var i = 0; i < _this.positionList.length; i++) {
-                            //城市数组
-                            let cityArray = _this.positionList[i].city.split(ch);
-                            //需求人数数组
-                            let numArray = _this.positionList[i].needNum.split(ch);
-                            _this.positionList[i].city = '';
-                            for (var j = 0; j < cityArray.length; j++) {
-                                if (cityArray[j] != '') {
-                                    _this.positionList[i].city = _this.positionList[i].city + cityArray[j] + '(' + numArray[j] + ')';
-                                }
-                            }
-                            if (_this.positionList[i].status == '0') {
-                                _this.positionList[i].status = '未发布';
-                            } else if (_this.positionList[i].status == '1') {
-                                _this.positionList[i].status = '已发布';
-                            }
-                            _this.positionList[i].del = false;
-                        }
-                        _this.loading = false;
-                    });
-                } else if (filterArg == 'release') {
-                    console.log('已发布');
-                    _this.filterItem = '已发布';
-                    for (var i = 0; i < _this.positionList.length; i++) {
-                        if (_this.positionList[i].status == '未发布') {
-                            //删除数组中一项
-                            _this.positionList.splice(i, 1);
-                            i--;
-                        }
-                    }
-                    console.log(_this.positionList);
-                } else if (filterArg == 'has') {
-                    console.log('有投递');
-                    _this.filterItem = '有投递';
+                _this.filterItem = filterArg;
+                if (filterArg == '全部') {
+                    //这时设置status为空 （status还原置空的时机）
+                    _this.$set(_this.commitData, 'status', '');
+                    _this.whenMountedRequestLength();
+                    _this.whenMountedRequest();
+                } else if (filterArg == '已发布') {
+                    //这时设置status为 1
+                    _this.$set(_this.commitData, 'status', '1');
+                    _this.whenMountedRequestLength();
+                    _this.whenMountedRequest();
+                } else if (filterArg == '有投递') {
                 }
             },
             //企业版-进入添加新职位页面
@@ -285,10 +382,8 @@
             seePosition(index, rowData) {
                 let _this = this;
                 console.log(rowData);
-                let action = 'e_see';
-                if (_this.userId != '' && _this.companyId == '') {
-                    action = 'u_see';
-                }
+                let action = '';
+                _this.control.e_ ? action = 'e_see' : action = 'u_see';
                 //携带数据
                 _this.$router.push({path: '/e_position', query: {position: rowData, action: action}});
             },
@@ -301,8 +396,19 @@
             //删除职位
             delPosition(index, rowData) {
                 let _this = this;
-                // console.log(index);
-                // console.log(rowData);
+                console.log(index);
+                console.log(rowData);
+                //求职者投递箱
+                if (_this.control.e_ == false) {
+                    let map = {
+                        "userId": _this.commitData.id,
+                        "positionId": rowData.id
+                    };
+                    _this.$ajax.post('/deletePost', map, {emulateJSON: true}).then((res) => {
+                        _this.$message({type: 'success', message: res.data});
+                    });
+                    return;
+                }
                 //选中的职位id
                 var positionIds = [];
                 if (typeof (rowData) == 'undefined') {
@@ -332,26 +438,16 @@
                     });
                 });
             },
-            //发布职位
-            releasePosition(index, rowData) {
+            //发布/撤回职位
+            changePositionStatus(index, rowData, status) {
                 let _this = this;
-                console.log('职位id：');
+                console.log('职位id');
                 console.log(rowData.id);
-                _this.$ajax.post('/releasePosition', rowData.id, {emulateJSON: true}).then((res) => {
-                    console.log(res.data);
-                    _this.$message({
-                        type: 'info',
-                        message: res.data
-                    });
-                });
-            },
-            //撤回职位
-            withdrawPosition(index, rowData) {
-                let _this = this;
-                console.log('职位id：');
-                console.log(rowData.id);
-                _this.$ajax.post('/withdrawPosition', rowData.id, {emulateJSON: true}).then((res) => {
-                    console.log(res.data);
+                let map = {
+                    "positionId": rowData.id,
+                    "status": status
+                };
+                _this.$ajax.post('/changePositionStatus', map, {emulateJSON: true}).then((res) => {
                     _this.$message({
                         type: 'info',
                         message: res.data
@@ -364,22 +460,100 @@
                 this.multipleSelection = val;
             },
             //投递进度
-            postStep(info) {
+            postStep(step) {
                 let _this = this;
-                _this.$message({
-                    type: 'success',
-                    message: info
-                });
+                _this.currentStep = step;
+                _this.commitData.postStatus = step - 1;
+                _this.whenMountedRequestLength();
+                _this.whenMountedRequest();
             },
             //加背景色
             addStyle({row, column, rowIndex, columnIndex}) {
                 if ((rowIndex % 2) == 1) {
                     return "background:#f0f9eb;";
                 }
+            },
+            //职位列表数据处理
+            positionListProcess() {
+                let _this = this;
+                for (let i = 0; i < _this.positionList.length; i++) {
+                    _this.positionList[i].status = _this.positionList[i].status == '0' ? '未发布' : '已发布';
+                    _this.positionList[i].del = false;
+                }
+                _this.loading = false;
+            },
+            //mounted时 发的请求
+            whenMountedRequest() {
+                let _this = this;
+                _this.$ajax.post(_this.loadUrl, _this.commitData, {emulateJSON: true}).then((res) => {
+                    _this.positionList = res.data;
+                    _this.positionListProcess();
+                });
+            },
+            whenMountedRequestLength() {
+                let _this = this;
+                //请求的职位列表总长度
+                _this.$ajax.post(_this.loadUrl + 'Length', _this.commitData, {emulateJSON: true}).then((res) => {
+                    _this.pageBean.currentListLength = res.data;
+                    _this.pageBean.tip = '职位总数 ' + _this.pageBean.currentListLength + ' 个';
+                });
+            },
+            //分页相关
+            //改变每页显示的条数时
+            handleSizeChange(val) {
+                let _this = this;
+                console.log('每页' + val + ' 条');
+                _this.$set(_this.pageBean, 'pageSize', val);
+                console.log(_this.pageBean);
+                _this.commitData.currentPage = _this.pageBean.currentPage;
+                _this.commitData.pageSize = _this.pageBean.pageSize;
+                _this.whenMountedRequest();
+            },
+            //当前页改变时
+            handleCurrentChange(val) {
+                let _this = this;
+                console.log('当前页: ' + val);
+                _this.$set(_this.pageBean, 'currentPage', val);
+                console.log(_this.pageBean);
+                _this.commitData.currentPage = _this.pageBean.currentPage;
+                _this.commitData.pageSize = _this.pageBean.pageSize;
+                _this.whenMountedRequest();
+            },
+
+            //搜索框相关
+            querySearch(queryString, cb) {
+                var restaurants = this.positionNameList;
+                var results = queryString ? restaurants.filter(this.createFilter(queryString)) : restaurants;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            createFilter(queryString) {
+                return (restaurant) => {
+                    return (restaurant.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                };
+            },
+            handleSelect(item) {
+                console.log(item);
             }
         }
     }
 </script>
 
 <style scoped>
+    /*280px是header+footer的高度之和*/
+    .el-main {
+        min-height: calc(100vh - 280px)
+    }
+    .el-pagination {
+        margin: 15px;
+    }
+    .el-col {
+        margin-bottom: 10px;
+    }
+    .el-step {
+        cursor: pointer;
+    }
+    .userPostList .el-col {
+        text-align: right;
+    }
 </style>

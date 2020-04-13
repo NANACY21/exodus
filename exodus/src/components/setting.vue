@@ -2,7 +2,7 @@
 <template>
     <div>
         <el-container>
-            <el-header>
+            <el-header height="100px">
                 <component :is="headerComponent"/>
             </el-header>
             <el-container>
@@ -26,41 +26,54 @@
                     </el-menu>
                 </el-aside>
                 <el-main>
-                    <el-row>
-                        <el-col :span="11">
-                            <el-upload
-                                title="点击以上传或更换头像"
-                                class="avatar-uploader"
-                                action="http://localhost:8088/uploadPhoto"
-                                multiple
-                                accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF"
-                                :show-file-list="false"
-                                :on-success="handleAvatarSuccess"
-                                :data="uploadCarryData"
-                                :before-upload="beforeAvatarUpload">
-                                <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                                <i v-else class="el-icon-plus avatar-uploader-icon"/>
-                            </el-upload>
-                        </el-col>
-                    </el-row>
-                    <el-row>
-                        <el-col :span="5">
-                            <h3>用户名</h3>
-                            <p><el-input @blur="confirmSubmit('/updateUsername','用户名')" v-model="users.username" :disabled="!users.usernameCanEdit" placeholder="用户名"/></p>
-                        </el-col>
-                        <el-col :span="5" offset="1">
-                            <h3>密码</h3>
-                            <p><el-input v-model="users.password" :disabled="!users.passwordCanEdit" type="password" placeholder="密码"/></p>
-                        </el-col>
-                        <el-col v-show="newPasswordVisible" :span="5" offset="1">
-                            <h3>新密码</h3>
-                            <p><el-input v-model="users.newPassword" type="password" placeholder="新密码"/></p>
-                        </el-col>
-                        <el-col v-show="newPasswordVisible" :span="5" offset="1">
-                            <h3>新密码确认</h3>
-                            <p><el-input @blur="confirmSubmit('/updatePassword','密码')" v-model="users.newPasswordConfirm" type="password" placeholder="新密码确认"/></p>
-                        </el-col>
-                    </el-row>
+                    <el-form :model="users">
+                        <el-row>
+                            <el-col :span="11">
+                                <el-form-item>
+                                    <el-upload
+                                        title="点击以上传或更换头像"
+                                        class="avatar-uploader"
+                                        action="http://localhost:8088/uploadPhoto"
+                                        multiple
+                                        accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF"
+                                        :show-file-list="false"
+                                        :on-success="handleAvatarSuccess"
+                                        :data="uploadCarryData"
+                                        :before-upload="beforeAvatarUpload">
+                                        <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                                        <i v-else class="el-icon-plus avatar-uploader-icon"/>
+                                    </el-upload>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                        <el-row>
+                            <el-col :span="6">
+                                <el-form-item prop="username" label="用户名" :label-width="labelWidth2">
+                                    <el-input @blur="confirmSubmit('/updateUsername','用户名')" v-model="users.username"
+                                              :disabled="!users.usernameCanEdit" placeholder="用户名"
+                                              clearable/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="6">
+                                <el-form-item prop="password" label="密码" :label-width="labelWidth1">
+                                    <el-input v-model="users.password" :disabled="!users.passwordCanEdit"
+                                              type="password" placeholder="密码" clearable/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-show="newPasswordVisible" :span="6">
+                                <el-form-item prop="newPassword" label="新密码" :label-width="labelWidth2">
+                                    <el-input v-model="users.newPassword" type="password" placeholder="新密码" clearable/>
+                                </el-form-item>
+                            </el-col>
+                            <el-col v-show="newPasswordVisible" :span="6">
+                                <el-form-item prop="newPasswordConfirm" label="密码确认" :label-width="labelWidth2">
+                                    <el-input @blur="confirmSubmit('/updatePassword','密码')"
+                                              v-model="users.newPasswordConfirm" type="password" placeholder="新密码确认"
+                                              clearable/>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </el-form>
                 </el-main>
             </el-container>
             <el-footer>
@@ -73,7 +86,7 @@
 <script>
     import u_header from "./subComponents/u_header";
     import u_footer from "./subComponents/u_footer";
-
+    const loginURL = '/isLogged';
     export default {
         // 注册组件
         components: {
@@ -83,6 +96,8 @@
         name: "setting",
         data() {
             return {
+                labelWidth1: '60px',
+                labelWidth2: '90px',
                 //上传头像时携带到后端的数据
                 uploadCarryData: {
                     username: '',
@@ -94,6 +109,8 @@
                 imageUrl: '',
                 //用户提交至本网站的个人信息
                 users: {
+                    //用户id
+                    id: '',
                     //用户名
                     username: this.$route.query.username,
                     //密码
@@ -115,6 +132,9 @@
         },
         mounted() {
             let _this = this;
+            _this.$ajax.post(loginURL, {}, {emulateJSON: true}).then(function (res) {
+                _this.users.id = res.data.id;
+            });
             //加载用户个人信息
             console.log('setting页面接收的数据：' + _this.users.username);
             _this.uploadCarryData.username = _this.users.username;
@@ -162,14 +182,14 @@
             beforeAvatarUpload(file) {
                 const isJPG = file.type === 'image/jpeg';
                 const isLt2M = file.size / 1024 / 1024 < 2;
-
                 if (!isJPG) {
-                    this.$message.error('上传头像图片只能是 JPG 格式!');
+                    // this.$message.error('上传头像图片只能是 JPG 格式!');
                 }
                 if (!isLt2M) {
                     this.$message.error('上传头像图片大小不能超过 2MB!');
                 }
-                return isJPG && isLt2M;
+                // return isJPG && isLt2M;
+                return isLt2M;
             },
             // 确认修改 url 标题
             confirmSubmit(url, hint) {
@@ -184,6 +204,11 @@
                             type: 'info',
                             message: res.data
                         });
+                        if (hint == '用户名') {
+                            _this.changeUn();
+                        } else if (hint == '密码') {
+                            _this.changePw();
+                        }
                     });
                 }).catch(() => {
                     _this.$message({
@@ -197,6 +222,11 @@
 </script>
 
 <style scoped>
+    .el-form-item,.el-input {
+        width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+    }
     /*头像*/
     .avatar-uploader {
         width: 178px;
@@ -226,7 +256,7 @@
         display: block;
     }
 
-    /*120px是header+footer的高度之和（按实际情况改）*/
+    /*120px是header+footer的高度之和 有变化再改（按实际情况改）*/
     .el-main {
         min-height: calc(100vh - 120px)
     }

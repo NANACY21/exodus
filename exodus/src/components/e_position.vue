@@ -1,175 +1,192 @@
-<!--职位卡片 使用场景：企业版用户增改查职位、用户版用户查看职位-->
+<!--职位卡片
+使用场景：
+企业版用户增改查职位
+用户版用户查看职位
+-->
 <template>
     <div>
         <el-container>
-            <el-header>
+            <el-header height="100px">
                 <component :is="headerComponent"/>
             </el-header>
             <el-main>
                 <el-row>
-                    <el-col :span="10" offset="14">
+                    <el-col :span="24" style="text-align: right">
                         <el-button-group>
-                            <el-button plain :disabled="true">{{this.control.title}}</el-button>
+                            <el-button class="tit" plain :disabled="true">{{this.control.title}}</el-button>
                             <el-button v-show="control.e_" plain type="primary" icon="el-icon-plus" @click="addCity" :disabled="control.isSee">工作地点</el-button>
-                            <el-button v-show="control.e_" plain type="success" icon="el-icon-plus" @click="submitForm('position')" :disabled="control.isSee">{{control.submitButtonInfo}}</el-button>
+                            <el-button v-show="control.e_" plain type="success" icon="el-icon-plus"
+                                       @click="submitForm('position')" :disabled="control.isSee"
+                                       v-loading.fullscreen.lock="addingPosition">
+                                {{control.submitButtonInfo}}
+                            </el-button>
                             <el-button v-show="control.e_" plain type="warning" icon="el-icon-refresh-right" @click="resetForm('position')" :disabled="control.isSee">重置</el-button>
                             <el-button v-show="!control.e_" plain type="success" icon="el-icon-message" @click="postResume" title="不能重复投递">投递</el-button>
-                            <el-button v-show="!control.e_" plain type="success" icon="el-icon-star-off">收藏</el-button>
+                            <el-button v-show="!control.e_" @click="collectPosition" plain type="success" :icon="collected>-1?icon1:icon2">{{collected>-1?'已收藏':'收藏'}}</el-button>
                             <el-button plain type="info" icon="el-icon-close" @click="cancel">取消</el-button>
                         </el-button-group>
                     </el-col>
                 </el-row>
                 <el-form :model="position" :rules="positionRule" ref="position" :disabled="control.isSee">
                     <el-row>
-                        <el-col :span="5">
-                            <el-form-item label="" :label-width="0" prop="name">
+                        <el-col :span="6">
+                            <el-form-item prop="name" label="职位名称" :label-width="labelWidth2">
                                 <el-cascader
                                     placeholder="选择职位"
-                                    title="点击以选择职位名称"
                                     v-model="position.name"
                                     :options="allTradeTreeRoot"
                                     :props="{ expandTrigger: 'hover' }"
                                     @change="handleChange"
-                                    clearable>
-                                </el-cascader>
+                                    clearable/>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="5" offset="1">
-                            <el-form-item label="" :label-width="0" prop="releaseTime">
-                                <el-input :disabled="true" :placeholder="'发布时间'+position.releaseTime"></el-input>
+                        <el-col :span="6">
+                            <!--弄成placeholder是为了不可编辑-->
+                            <el-form-item prop="releaseTime" label="发布时间" :label-width="labelWidth2">
+                                <el-input :disabled="true" v-model="position.releaseTime"/>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row v-show="!control.e_">
-                        <el-col :span="7">
-                            <el-form-item label="" :label-width="0" prop="companyName">
-                                <el-input :placeholder="'公司名称：'+position.companyName"></el-input>
-                            </el-form-item>
-                        </el-col>
-                        <el-col :span="16" offset="1">
-                            <el-form-item label="" :label-width="0" prop="companyInfo">
-                                <el-input :placeholder="'公司简介'+position.companyInfo"></el-input>
+                        <el-col :span="6">
+                            <el-form-item prop="companyName" label="公司名称" :label-width="labelWidth2">
+                                <el-input v-model="position.companyName"/>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="11">
-                            <el-form-item label="" :label-width="0" prop="detail">
-                                <el-input class="textarea" placeholder="职位详细信息" type="textarea" :rows="8" v-model="position.detail" clearable></el-input>
+                        <el-col :span="12" v-show="!control.e_">
+                            <el-form-item prop="companyInfo" label="公司简介" :label-width="labelWidth2">
+                                <el-input class="textarea" type="textarea" :rows="8" v-model="position.companyInfo"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item prop="detail" label="职位要求" :label-width="labelWidth2">
+                                <el-input class="textarea" type="textarea" :rows="8" placeholder="职位详细信息"
+                                          v-model="position.detail" clearable/>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row v-for="(item, index) in cityAndNum" :key="item.key">
-                        <el-col :span="5">
-                            <el-form-item label="" :label-width="0">
-                                <el-input clearable suffix-icon="el-icon-office-building" v-model="item.city" placeholder="工作地点"></el-input>
+                        <el-col :span="6">
+                            <el-form-item label="工作地点" :label-width="labelWidth2">
+                                <el-cascader
+                                    placeholder="选择工作城市"
+                                    :show-all-levels="false"
+                                    filterable
+                                    v-model="item.city"
+                                    :options="citySelector.options"
+                                    :props="{ expandTrigger: 'hover' }"
+                                    @change="handleChange2"
+                                    clearable/>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="5" offset="1">
-                            <el-form-item label="" :label-width="0">
-                                <el-input placeholder="该工作地点的人数" clearable type="number" v-model="item.num"></el-input>
+                        <el-col :span="6">
+                            <el-form-item label="需求人数" :label-width="labelWidth2">
+                                <el-input placeholder="该地点需求人数" clearable type="number" v-model="item.num"/>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="5" offset="1" v-show="!control.e_">
-                            <el-form-item label="" :label-width="0">
-                                <el-input :placeholder="'已投递：'+item.num"></el-input>
+                        <el-col :span="6" v-show="!control.e_">
+                            <el-form-item label="已投递" :label-width="labelWidth2">
+                                <el-input v-model="item.num"/>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="2" offset="1">
-                            <el-form-item :label-width="0">
+                        <el-col :span="6" style="text-align: right">
+                            <el-form-item>
                                 <el-button plain type="danger" icon="el-icon-delete" @click.prevent="removeCity(item)">删除</el-button>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="5">
-                            <el-form-item label="" :label-width="0" prop="workExp">
+                        <el-col :span="6">
+                            <el-form-item prop="workExp" label="工作经验" :label-width="labelWidth2">
                                 <el-select clearable v-model="position.workExp" placeholder="工作年限要求">
-                                    <el-option v-for="item in workExp_web" :key="item" :label="item" :value="item"></el-option>
+                                    <el-option v-for="item in workExp_web" :key="item" :label="item" :value="item"/>
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="5" offset="1">
-                            <el-form-item label="" :label-width="0" prop="eduBg">
+                        <el-col :span="6">
+                            <el-form-item prop="eduBg" label="学历要求" :label-width="labelWidth2">
                                 <el-select clearable v-model="position.eduBg" placeholder="学历要求">
-                                    <el-option v-for="item in eduBg_web" :key="item" :label="item" :value="item"></el-option>
+                                    <el-option v-for="item in eduBg_web" :key="item" :label="item" :value="item"/>
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="5" offset="1">
-                            <el-form-item :label-width="0" prop="salary">
-                                <el-input type="number" suffix-icon="el-icon-upload2" clearable v-model="position.salary" placeholder="最高月薪"></el-input>
+                        <el-col :span="6">
+                            <el-form-item prop="salary" label="最高月薪" :label-width="labelWidth2">
+                                <el-input type="number" clearable
+                                          v-model="position.salary"/>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="5" offset="1">
-                            <el-form-item :label-width="0" prop="salaryFloat">
-                                <el-input clearable type="number" v-model="position.salaryFloat" placeholder="月薪浮动"></el-input>
+                        <el-col :span="6">
+                            <el-form-item prop="salaryFloat" label="月薪浮动" :label-width="labelWidth2">
+                                <el-input clearable type="number" v-model="position.salaryFloat"/>
                             </el-form-item>
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="5">
-                            <el-form-item :label-width="0" prop="worktype">
-                                <el-select clearable v-model="position.worktype" placeholder="工作性质">
-                                    <el-option v-for="item in worktype_web" :key="item" :label="item" :value="item"></el-option>
+                        <el-col :span="6">
+                            <el-form-item prop="worktype" label="工作性质" :label-width="labelWidth2">
+                                <el-select clearable v-model="position.worktype">
+                                    <el-option v-for="item in worktype_web" :key="item" :label="item" :value="item"/>
                                 </el-select>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="5" offset="1">
-                            <el-form-item label="" :label-width="0" prop="faceto">
-                                <el-select clearable v-model="position.faceto" placeholder="面向">
-                                    <el-option v-for="item in faceto_web" :key="item" :label="item" :value="item"></el-option>
+                        <el-col :span="6">
+                            <el-form-item prop="faceto" label="面向群体" :label-width="labelWidth2">
+                                <el-select clearable v-model="position.faceto">
+                                    <el-option v-for="item in faceto_web" :key="item" :label="item" :value="item"/>
                                 </el-select>
                             </el-form-item>
                         </el-col>
                     </el-row>
                 </el-form>
             </el-main>
+            <el-footer>
+                <component :is="footerComponent"/>
+            </el-footer>
         </el-container>
     </div>
 </template>
 
 <script>
     import u_header from "./subComponents/u_header";
+    import u_footer from "./subComponents/u_footer";
     const loginURL = '/isLogged';
     //字符
     const ch = '#';
     export default {
         components: {
-            "u_header": u_header
+            "u_header": u_header,
+            "u_footer":u_footer
         },
         name: "e_position",
         mounted() {
             let _this = this;
             _this.$ajax.post(loginURL, {}, {emulateJSON: true}).then(function (res) {
-                if (res.data.username == null) {
-                    _this.$router.push('/');
-                    _this.$message({
-                        message: '请先登录',
-                        type: 'warning'
-                    });
-                    return;
-                }
                 _this.users = res.data;
-                console.log('当前用户');
-                console.log(_this.users);
             });
 
             //加载供选择的职位
             _this.$ajax.get('/getAllTradeTreeRoot').then(function (res) {
                 _this.allTradeTreeRoot = res.data;
             });
+            //城市选择器
+            _this.$ajax.post('/readJSONFile', "city", {emulateJSON: true}).then((res) => {
+                _this.citySelector = res.data;
+            });
 
             //进入该卡片的动作
             var action = _this.$route.query.action;
             //传到该页面的数据
             var tempPosition = _this.$route.query.position;
+            _this.collected = _this.$route.query.collected;
 
             //企业版 添加职位
             if (action == 'e_add' && typeof (tempPosition) == 'undefined') {
                 _this.control.e_ = true;
                 _this.control.isSee = false;
-                console.log('这是添加态页面，没有要显示的职位');
+                console.log('######这是添加态页面，没有要显示的职位');
             } else {
                 console.log('有要显示的职位');
                 console.log(tempPosition);
@@ -235,6 +252,15 @@
 
         data() {
             return {
+                //正在添加职位
+                addingPosition: false,
+                labelWidth1: '60px',
+                labelWidth2: '90px',
+                //已收藏
+                icon1: 'el-icon-star-on',
+                //未收藏
+                icon2: 'el-icon-star-off',
+                collected: -1,
                 //不同使用场景的页面控制
                 control: {
                     //当前是否为浏览态
@@ -247,11 +273,16 @@
                     submitButtonInfo: '确认新增',
                 },
 
-                //发布该职位的人
+                //发布该职位的人 当前用户
                 users: {},
+                //头部组件
                 headerComponent: 'u_header',
+                //底部组件
+                footerComponent: 'u_footer',
                 //选择职位名称时 所有行业树根节点
                 allTradeTreeRoot: [],
+                //城市选择器
+                citySelector: {},
                 //职位 表单数据封装
                 position: {
                     //职位id
@@ -290,12 +321,12 @@
                     releaseTime: ''
                 },
                 //前端数据结构
-                workExp_web: ['不限', '一年', '二年'],
+                workExp_web: ['不要求', '应届毕业生', '3年及以下', '3-5年', '5-10年', '10年以上'],
                 //前端数据结构
-                eduBg_web: ['博士', '硕士', '本科', '大专'],
-                worktype_web: ['全职', '实习', '兼职'],
+                eduBg_web: ['不要求', '博士', '硕士', '本科', '大专'],
+                worktype_web: ['不限', '全职', '兼职', '实习'],
                 faceto_web: ['社招', '校招'],
-                //工作地点 该地点需求人数内存前端数据结构----
+                //工作地点 该地点需求人数内存前端数据结构
                 cityAndNum: [{
                     //工作地点
                     city: '',
@@ -339,22 +370,29 @@
                 }
             };
         },
-        methods:{
+        methods: {
             //选择职位名称 级联选择器选中值变化时触发
             handleChange(value) {
                 console.log(value);
                 //新增的职位名称
                 this.position.name = value[2];
             },
+            //城市选择器 值变化时
+            handleChange2(value) {
+                console.log(value);
+            },
             //新增/编辑职位
             submitForm: function (formName) {
-                this.$refs[formName].validate((valid) => {
+                let _this = this;
+                _this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        var _this = this;
                         // 职位已发布不能修改
-                        if (_this.position.status == '1' && _this.position.id != '' && _this.control.submitButtonInfo=='保存修改') {
+                        if (
+                            _this.position.status == '1' &&
+                            _this.position.id != '' &&
+                            _this.control.submitButtonInfo == '保存修改'
+                        ) {
                             _this.$message({
-                                showClose: true,
                                 message: '该职位已经发布不能修改',
                                 type: 'error'
                             });
@@ -366,7 +404,7 @@
                         _this.position.city = '';
                         _this.position.needNum = '';
                         _this.cityAndNum.forEach(item => {
-                            console.log("每个工作地点：");
+                            console.log("每个工作地点");
                             console.log(item);
                             _this.position.city = _this.position.city + item.city + ch;
                             _this.position.needNum = _this.position.needNum + item.num + ch;
@@ -384,10 +422,12 @@
                             return;
                         }
                         //添加/编辑职位
+                        _this.addingPosition = true;
                         _this.$ajax.post('/savePosition', _this.position, {emulateJSON: true}).then((res) => {
                             console.log(res.data);
                             let result = res.data;
                             if (result.includes('成功')) {
+                                _this.addingPosition = false;
                                 _this.$message({
                                     showClose: true,
                                     message: result,
@@ -397,11 +437,12 @@
                                 //后退一页
                                 _this.$router.go(-1);
                             } else {
+                                _this.addingPosition = false;
                                 this.$message.error(result);
                             }
                         });
                     } else {
-                        console.log('error submit!!');
+                        console.log('add position fail');
                         return false;
                     }
                 });
@@ -461,11 +502,26 @@
             },
             //申请职位，投递简历
             postResume() {
-                console.log(this.position.id);
                 let _this = this;
-                var job_apply = {userId: _this.users.id, positionId: _this.position.id};
+                console.log(_this.position.id);
+                let job_apply = {userId: _this.users.id, positionId: _this.position.id};
                 _this.$ajax.post('/postResume', job_apply, {emulateJSON: true}).then((res) => {
                     _this.$message({type: 'info', message: res.data});
+                });
+            },
+            //收藏该职位
+            collectPosition() {
+                let _this = this;
+                let map = {
+                    "username": _this.users.username,
+                    "positionId": _this.position.id
+                };
+                if (typeof (_this.users.username) == 'undefined') {
+                    _this.$message({type: 'warning', message: '请先登录'});
+                    return;
+                }
+                _this.$ajax.post('/collectPosition', map, {emulateJSON: true}).then((res) => {
+                    _this.$message({type: 'success', message: res.data});
                 });
             }
         }
@@ -473,12 +529,19 @@
 </script>
 
 <style scoped>
-    .el-form {
+    /*标题*/
+    .tit {
+        background-color: #67C23A !important;
+        color: #475669 !important;
+        font-weight: bold;
+    }
+    .el-form,.el-row {
         width: 1200px;
         margin-left: auto;
         margin-right: auto;
+        background-color: aliceblue;
     }
-    .el-form-item {
+    .el-form-item,.el-input {
         width: 100%;
         margin-right: auto;
         margin-left: auto;
@@ -487,5 +550,14 @@
     .textarea >>> .el-textarea__inner{
         font-family:"Microsoft" !important;
         font-size:16px !important;
+    }
+    /*禁用时背景色和字体颜色*/
+    .el-form :disabled {
+        background-color: white;
+        color: #475669;
+    }
+    /*120px是header+footer的高度之和 有变化再改（按实际情况改）*/
+    .el-main {
+        min-height: calc(100vh - 120px)
     }
 </style>

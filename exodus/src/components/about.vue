@@ -12,7 +12,7 @@
                 <el-aside width="250px">
                     <el-menu :default-openeds="['1', '3']">
                         <el-submenu index="1">
-                            <template slot="title"><i class="el-icon-message"></i>导航一</template>
+                            <template slot="title"><i class="el-icon-message"/>导航一</template>
                             <el-menu-item-group>
                                 <template slot="title">分组一</template>
                                 <el-menu-item index="1-1">选项1</el-menu-item>
@@ -27,7 +27,7 @@
                             </el-submenu>
                         </el-submenu>
                         <el-submenu index="2">
-                            <template slot="title"><i class="el-icon-menu"></i>导航二</template>
+                            <template slot="title"><i class="el-icon-menu"/>导航二</template>
                             <el-menu-item-group>
                                 <template slot="title">分组一</template>
                                 <el-menu-item index="2-1">选项1</el-menu-item>
@@ -42,7 +42,7 @@
                             </el-submenu>
                         </el-submenu>
                         <el-submenu index="3">
-                            <template slot="title"><i class="el-icon-setting"></i>导航三</template>
+                            <template slot="title"><i class="el-icon-setting"/>导航三</template>
                             <el-menu-item-group>
                                 <template slot="title">分组一</template>
                                 <el-menu-item index="3-1">选项1</el-menu-item>
@@ -110,18 +110,26 @@
                     </el-main>
                 </el-container>
             </el-container>
-            <el-footer height="100px">
-                <h3>Footer</h3>
+            <el-footer height="180px">
+                <component :is="footerComponent"/>
             </el-footer>
         </el-container>
     </div>
 </template>
 
 <script>
+    import u_footer from "./subComponents/u_footer";
+
     export default {
+        components: {
+            "u_footer": u_footer
+        },
         name: "about",
         data() {
-            return {};
+            return {
+                //底部组件
+                footerComponent: 'u_footer',
+            };
         },
         methods: {
             goBack() {

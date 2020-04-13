@@ -4,7 +4,7 @@
 <template>
     <div>
         <el-container>
-            <el-header>
+            <el-header height="120px">
                 <component :is="headerComponent"/>
             </el-header>
             <el-container ref="entirePage">
@@ -22,99 +22,96 @@
                         <img v-if="imageUrl" :src="imageUrl" class="avatar">
                         <i v-else class="el-icon-plus avatar-uploader-icon"/>
                     </el-upload>
-                    <el-divider/>
-                    <el-menu
-                        default-active="1"
-                        class="el-menu-vertical-demo">
-                        <el-menu-item index="0">
-                            <el-progress title="简历完整度" :text-inside="true" :stroke-width="26" :percentage="resumeIntegrity" status="success"/>
-                        </el-menu-item>
-                        <el-menu-item index="1" @click="goAppointForm('#resumePart')">
-                            <i class="el-icon-user"/>
-                            <span slot="title">基本信息</span>
-                        </el-menu-item>
-                        <el-menu-item index="2" @click="goAppointForm('#edu_expPart')">
-                            <i class="el-icon-notebook-2"/>
-                            <span slot="title">教育经历</span>
-                        </el-menu-item>
-                        <el-menu-item index="3" @click="goAppointForm('#project_expPart')">
-                            <i class="el-icon-cpu"/>
-                            <span slot="title">项目经历</span>
-                        </el-menu-item>
-                        <el-menu-item index="4" @click="goAppointForm('#work_expPart')">
-                            <i class="el-icon-monitor"/>
-                            <span slot="title">工作经历</span>
-                        </el-menu-item>
-                        <el-menu-item index="5">
-                            <i class="el-icon-upload2"/>
-                            <span slot="title">上传附件简历</span>
-                        </el-menu-item>
-                        <el-menu-item index="6" v-print="'#pdf'">
-                            <i class="el-icon-download"/>
-                            <span slot="title">导出为PDF</span>
-                        </el-menu-item>
-                    </el-menu>
-                    <el-divider/>
+                    <el-progress :stroke-width="30" title="简历完整度" :text-inside="true" :percentage="resumeIntegrity" status="success"/>
+                    <div class="dir">
+                        <el-menu
+                            default-active="1"
+                            class="el-menu-vertical-demo">
+                            <el-menu-item index="1" @click="goAppointForm('#resumePart')" title="完善个人信息">
+                                <i class="el-icon-user"/>
+                                <span slot="title">基本信息</span>
+                            </el-menu-item>
+                            <el-menu-item index="2" @click="goAppointForm('#edu_expPart')">
+                                <i class="el-icon-notebook-2"/>
+                                <span slot="title">教育经历</span>
+                            </el-menu-item>
+                            <el-menu-item index="3" @click="goAppointForm('#project_expPart')">
+                                <i class="el-icon-cpu"/>
+                                <span slot="title">项目经历</span>
+                            </el-menu-item>
+                            <el-menu-item index="4" @click="goAppointForm('#work_expPart')">
+                                <i class="el-icon-monitor"/>
+                                <span slot="title">工作经历</span>
+                            </el-menu-item>
+                            <el-menu-item index="5" title="上传附件简历">
+                                <i class="el-icon-upload2"/>
+                                <span slot="title">上传简历</span>
+                            </el-menu-item>
+                            <el-menu-item index="6" v-print="'#pdf'" title="导出为PDF文件">
+                                <i class="el-icon-download"/>
+                                <span slot="title">导出简历</span>
+                            </el-menu-item>
+                        </el-menu>
+                    </div>
                 </el-aside>
                 <!--生成pdf的部分-->
                 <el-main id="pdf">
                     <!--第一部分-->
                     <el-row id="resumePart">
-                        <el-col :span="24">
+                        <el-col :span="24" class="title">
                             <el-button-group>
-                                <el-button title="个人介绍" plain :disabled="true" icon="el-icon-arrow-down">基本信息</el-button>
-                                <el-button plain type="success" icon="el-icon-edit" @click="editForm(resume,'resume')">编辑</el-button>
-                                <el-button plain type="success" icon="el-icon-check" @click="submitForm(resume,'resume')">保存</el-button>
-                                <el-button plain type="success" icon="el-icon-delete" @click="resetForm('resume')">清空</el-button>
+                                <el-button class="tit" title="个人介绍" plain :disabled="true">基本信息</el-button>
+                                <el-button type="primary" icon="el-icon-edit" @click="editForm(resume,'resume')">编辑</el-button>
+                                <el-button type="success" icon="el-icon-check" @click="submitForm(resume,'resume')">保存</el-button>
+                                <el-button type="warning" icon="el-icon-delete" @click="resetForm(resume,'resume')">清空</el-button>
                             </el-button-group>
                         </el-col>
                     </el-row>
                     <el-form :model="resume" :rules="resumeRule" ref="resume" :disabled="!resume.canEdit">
                         <el-row>
-                            <el-col :span="5">
-                                <el-form-item prop="name">
-                                    <el-input title="姓名" v-model="resume.name" placeholder="真实姓名" clearable></el-input>
+                            <el-col :span="6">
+                                <el-form-item prop="name" label="姓名" :label-width="labelWidth1">
+                                    <el-input v-model="resume.name" placeholder="真实姓名" clearable></el-input>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="11" offset="1">
-                                <el-form-item prop="jobIntent">
-                                    <el-input title="求职意向 求职目标" v-model="resume.jobIntent" placeholder="求职意向" clearable></el-input>
+                            <el-col :span="12">
+                                <el-form-item prop="jobIntent" label="求职目标" :label-width="labelWidth2">
+                                    <el-input v-model="resume.jobIntent" placeholder="求职意向" clearable></el-input>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="3" offset="1">
-                                <el-form-item prop="sex">
-                                    <el-radio-group fill="#67C23A" v-model="resume.sex" title="性别">
+                            <el-col :span="4">
+                                <el-form-item prop="sex" label="性别" :label-width="labelWidth1">
+                                    <el-radio-group v-model="resume.sex">
                                         <el-radio-button label="男"/>
                                         <el-radio-button label="女"/>
                                     </el-radio-group>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="2">
-                                <el-tag title="年龄" type="success">{{resume.age_web+'岁'}}</el-tag>
+                                <el-button type="text" :disabled="true" title="年龄">{{resume.age_web+'岁'}}</el-button>
                             </el-col>
                         </el-row>
                         <el-row>
-                            <el-col :span="5">
-                                <el-form-item prop="telephone">
-                                    <el-input title="手机号" v-model="resume.telephone" placeholder="手机号" clearable type="number"></el-input>
+                            <el-col :span="6">
+                                <el-form-item prop="telephone" label="手机" :label-width="labelWidth1">
+                                    <el-input v-model="resume.telephone" placeholder="手机号" clearable type="number"/>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="5" offset="1">
-                                <el-form-item prop="email">
-                                    <el-input title="邮箱" v-model="resume.email" placeholder="邮箱" clearable type="email"></el-input>
+                            <el-col :span="6">
+                                <el-form-item prop="email" label="邮箱" :label-width="labelWidth1">
+                                    <el-input v-model="resume.email" placeholder="邮箱" clearable type="email"/>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="5" offset="1">
-                                <el-form-item prop="location">
-                                    <el-input title="现居地 现住址" v-model="resume.location" placeholder="现居地" clearable></el-input>
+                            <el-col :span="6">
+                                <el-form-item prop="location" label="现住址" :label-width="labelWidth2">
+                                    <el-input v-model="resume.location" placeholder="现居地 所在地" clearable/>
                                 </el-form-item>
                             </el-col>
-                            <el-col :span="5" offset="1">
-                                <el-form-item prop="birthday">
+                            <el-col :span="6">
+                                <el-form-item prop="birthday" label="生日" :label-width="labelWidth1">
                                     <el-date-picker
                                         v-model="resume.birthday"
                                         type="date"
-                                        title="生日"
                                         placeholder="生日"
                                         format="yyyy 年 MM 月 dd 日"
                                         value-format="yyyy-MM-dd">
@@ -123,34 +120,33 @@
                             </el-col>
                         </el-row>
                         <el-row>
-                            <el-col :span="23">
-                                <el-form-item prop="skill">
+                            <el-col :span="24">
+                                <el-form-item prop="skill" label="个人技能" :label-width="labelWidth2">
                                     <el-input :autosize="{ minRows: 4, maxRows: 10}" :rows="10" maxlength="600"
-                                              show-word-limit title="个人专业技能" class="textarea" type="textarea"
-                                              v-model="resume.skill" placeholder="个人技能" clearable/>
+                                              show-word-limit class="textarea" type="textarea"
+                                              v-model="resume.skill" placeholder="个人专业技能" clearable/>
                                 </el-form-item>
                             </el-col>
                         </el-row>
                         <el-row>
-                            <el-col :span="23">
-                                <el-form-item prop="selfeval">
+                            <el-col :span="24">
+                                <el-form-item prop="selfeval" label="自我评价" :label-width="labelWidth2">
                                     <el-input :autosize="{ minRows: 3, maxRows: 6}" :rows="6" maxlength="400"
-                                              show-word-limit title="自我评价" class="textarea" type="textarea"
+                                              show-word-limit class="textarea" type="textarea"
                                               v-model="resume.selfeval" placeholder="自我评价" clearable/>
                                 </el-form-item>
                             </el-col>
                         </el-row>
                     </el-form>
-                    <el-divider content-position="right">基本信息End</el-divider>
                     <!--第二部分-->
                     <el-row id="edu_expPart">
-                        <el-col :span="24">
+                        <el-col :span="24" class="title">
                             <el-button-group>
-                                <el-button title="教育背景" plain :disabled="true" icon="el-icon-arrow-down">教育经历</el-button>
-                                <el-button plain type="success" icon="el-icon-edit" @click="editForm(edu_expList[edu_expCurrentIndex],'edu_exp')">编辑</el-button>
-                                <el-button plain type="success" icon="el-icon-check" @click="submitForm(edu_expList[edu_expCurrentIndex],'edu_exp')">保存</el-button>
-                                <el-button plain type="success" icon="el-icon-delete" @click="resetForm('edu_exp')">清空</el-button>
-                                <el-button plain type="success" icon="el-icon-plus" @click="addEdu_exp">教育经历</el-button>
+                                <el-button class="tit" title="教育背景" plain :disabled="true">教育经历</el-button>
+                                <el-button type="primary" icon="el-icon-edit" @click="editForm(edu_expList[edu_expCurrentIndex],'edu_exp')">编辑</el-button>
+                                <el-button type="success" icon="el-icon-check" @click="submitForm(edu_expList[edu_expCurrentIndex],'edu_exp')">保存</el-button>
+                                <el-button type="warning" icon="el-icon-delete" @click="resetForm(edu_expList[edu_expCurrentIndex],'edu_exp')">清空</el-button>
+                                <el-button type="primary" icon="el-icon-plus" @click="addEdu_exp">教育经历</el-button>
                             </el-button-group>
                         </el-col>
                     </el-row>
@@ -160,26 +156,27 @@
                                 <el-tab-pane v-for="(item, index) in edu_expList" :key="index" :label="'教育经历'+index" :name="index">
                                     <el-form :model="item" :rules="edu_expRule" ref="edu_exp" :disabled="!item.canEdit">
                                         <el-row>
-                                            <el-col :span="5">
-                                                <el-form-item prop="eduBg">
-                                                    <el-select title="学历学位" clearable v-model="item.eduBg" placeholder="学历">
-                                                        <el-option v-for="it in eduBg_web" :key="it" :label="it" :value="it"></el-option>
+                                            <el-col :span="6">
+                                                <el-form-item prop="eduBg" label="学历" :label-width="labelWidth1">
+                                                    <el-select clearable v-model="item.eduBg" placeholder="学历学位">
+                                                        <el-option v-for="it in eduBg_web" :key="it" :label="it"
+                                                                   :value="it"/>
                                                     </el-select>
                                                 </el-form-item>
                                             </el-col>
-                                            <el-col :span="5" offset="1">
-                                                <el-form-item prop="school">
-                                                    <el-input title="学校名称" clearable v-model="item.school" placeholder="学校名称"></el-input>
+                                            <el-col :span="6">
+                                                <el-form-item prop="school" label="学校名称" :label-width="labelWidth2">
+                                                    <el-input clearable v-model="item.school" placeholder="学校名称"/>
                                                 </el-form-item>
                                             </el-col>
-                                            <el-col :span="5" offset="1">
-                                                <el-form-item prop="major">
-                                                    <el-input title="专业名称" clearable v-model="item.major" placeholder="专业"></el-input>
+                                            <el-col :span="6">
+                                                <el-form-item prop="major" label="专业" :label-width="labelWidth1">
+                                                    <el-input clearable v-model="item.major" placeholder="专业名称"/>
                                                 </el-form-item>
                                             </el-col>
-                                            <el-col :span="5" offset="1">
-                                                <el-form-item prop="ranking">
-                                                    <el-select title="专业学习排名" clearable v-model="item.ranking" placeholder="学习排名">
+                                            <el-col :span="6">
+                                                <el-form-item prop="ranking" label="学习排名" :label-width="labelWidth2">
+                                                    <el-select clearable v-model="item.ranking" placeholder="专业学习排名">
                                                         <el-option
                                                             v-for="it in ranking_web"
                                                             :key="it"
@@ -191,10 +188,9 @@
                                             </el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="5">
-                                                <el-form-item prop="begindate">
+                                            <el-col :span="6">
+                                                <el-form-item prop="begindate" label="入学时间" :label-width="labelWidth2">
                                                     <el-date-picker
-                                                        title="入学时间"
                                                         v-model="item.begindate"
                                                         type="date"
                                                         placeholder="开始日期"
@@ -203,10 +199,9 @@
                                                     </el-date-picker>
                                                 </el-form-item>
                                             </el-col>
-                                            <el-col :span="5" offset="1">
-                                                <el-form-item prop="enddate">
+                                            <el-col :span="6">
+                                                <el-form-item prop="enddate" label="毕业时间" :label-width="labelWidth2">
                                                     <el-date-picker
-                                                        title="毕业时间"
                                                         v-model="item.enddate"
                                                         type="date"
                                                         placeholder="结束日期"
@@ -217,9 +212,11 @@
                                             </el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="23">
-                                                <el-form-item prop="award">
-                                                    <el-input maxlength="400" show-word-limit title="在校期间主要获得奖项 获奖情况" class="textarea" type="textarea" v-model="item.award" :rows="8" placeholder="主要获得奖项"></el-input>
+                                            <el-col :span="24">
+                                                <el-form-item prop="award" label="获奖情况" :label-width="labelWidth2">
+                                                    <el-input maxlength="400" show-word-limit class="textarea"
+                                                              type="textarea" v-model="item.award" :rows="8"
+                                                              placeholder="在校期间主要获得奖项"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -228,16 +225,15 @@
                             </el-tabs>
                         </el-col>
                     </el-row>
-                    <el-divider content-position="right">教育经历End</el-divider>
                     <!--第三部分-->
                     <el-row id="project_expPart">
-                        <el-col :span="24">
+                        <el-col :span="24" class="title">
                             <el-button-group>
-                                <el-button plain :disabled="true" icon="el-icon-arrow-down">项目经历</el-button>
-                                <el-button plain type="success" icon="el-icon-edit" @click="editForm(project_expList[project_expCurrentIndex],'project_exp')">编辑</el-button>
-                                <el-button plain type="success" icon="el-icon-check" @click="submitForm(project_expList[project_expCurrentIndex],'project_exp')">保存</el-button>
-                                <el-button plain type="success" icon="el-icon-delete" @click="resetForm('project_exp')">清空</el-button>
-                                <el-button plain type="success" icon="el-icon-plus" @click="addProject_exp">项目经历</el-button>
+                                <el-button class="tit" plain :disabled="true">项目经历</el-button>
+                                <el-button type="primary" icon="el-icon-edit" @click="editForm(project_expList[project_expCurrentIndex],'project_exp')">编辑</el-button>
+                                <el-button type="success" icon="el-icon-check" @click="submitForm(project_expList[project_expCurrentIndex],'project_exp')">保存</el-button>
+                                <el-button type="warning" icon="el-icon-delete" @click="resetForm(project_expList[project_expCurrentIndex],'project_exp')">清空</el-button>
+                                <el-button type="primary" icon="el-icon-plus" @click="addProject_exp">项目经历</el-button>
                             </el-button-group>
                         </el-col>
                     </el-row>
@@ -247,16 +243,18 @@
                                 <el-tab-pane v-for="(item, index) in project_expList" :key="index" :label="'项目经历'+index" :name="index">
                                     <el-form :model="item" ref="project_exp" :rules="project_expRule" :disabled="!item.canEdit">
                                         <el-row>
-                                            <el-col :span="5">
-                                                <el-form-item prop="name">
-                                                    <el-input title="项目名称" clearable v-model="item.name" placeholder="项目名称"></el-input>
+                                            <el-col :span="6">
+                                                <el-form-item prop="name" label="项目名称" :label-width="labelWidth2">
+                                                    <el-input clearable v-model="item.name" placeholder="项目名称"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="23">
-                                                <el-form-item prop="detail">
-                                                    <el-input maxlength="1000" show-word-limit title="项目描述介绍" v-model="item.detail" class="textarea" type="textarea" placeholder="项目描述" :rows="8"></el-input>
+                                            <el-col :span="24">
+                                                <el-form-item prop="detail" label="项目描述" :label-width="labelWidth2">
+                                                    <el-input maxlength="1000" show-word-limit v-model="item.detail"
+                                                              class="textarea" type="textarea" placeholder="项目描述介绍"
+                                                              :rows="8"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -265,16 +263,15 @@
                             </el-tabs>
                         </el-col>
                     </el-row>
-                    <el-divider content-position="right">项目经历End</el-divider>
                     <!--第四部分-->
                     <el-row id="work_expPart">
-                        <el-col :span="24">
+                        <el-col :span="24" class="title">
                             <el-button-group>
-                                <el-button plain :disabled="true" icon="el-icon-arrow-down">工作经历</el-button>
-                                <el-button plain type="success" icon="el-icon-edit" @click="editForm(work_expList[work_expCurrentIndex],'work_exp')">编辑</el-button>
-                                <el-button plain type="success" icon="el-icon-check" @click="submitForm(work_expList[work_expCurrentIndex],'work_exp')">保存</el-button>
-                                <el-button plain type="success" icon="el-icon-delete" @click="resetForm('work_exp')">清空</el-button>
-                                <el-button plain type="success" icon="el-icon-plus" @click="addWork_exp">工作经历</el-button>
+                                <el-button class="tit" plain :disabled="true">工作经历</el-button>
+                                <el-button type="primary" icon="el-icon-edit" @click="editForm(work_expList[work_expCurrentIndex],'work_exp')">编辑</el-button>
+                                <el-button type="success" icon="el-icon-check" @click="submitForm(work_expList[work_expCurrentIndex],'work_exp')">保存</el-button>
+                                <el-button type="warning" icon="el-icon-delete" @click="resetForm(work_expList[work_expCurrentIndex],'work_exp')">清空</el-button>
+                                <el-button type="primary" icon="el-icon-plus" @click="addWork_exp">工作经历</el-button>
                             </el-button-group>
                         </el-col>
                     </el-row>
@@ -284,62 +281,64 @@
                                 <el-tab-pane v-for="(item, index) in work_expList" :key="index" :label="'工作经历'+index" :name="index">
                                     <el-form :model="item" :rules="work_expRule" ref="work_exp" :disabled="!item.canEdit">
                                         <el-row>
-                                            <el-col :span="5">
-                                                <el-form-item prop="company">
-                                                    <el-input title="公司名称" clearable v-model="item.company" placeholder="公司名称"></el-input>
+                                            <el-col :span="6">
+                                                <el-form-item prop="company" label="公司名称" :label-width="labelWidth2">
+                                                    <el-input clearable v-model="item.company" placeholder="公司名称"/>
                                                 </el-form-item>
                                             </el-col>
-                                            <el-col :span="5" offset="1">
-                                                <el-form-item prop="department">
-                                                    <el-input title="工作部门" clearable v-model="item.department" placeholder="所在部门"></el-input>
+                                            <el-col :span="6">
+                                                <el-form-item prop="department" label="工作部门" :label-width="labelWidth2">
+                                                    <el-input clearable v-model="item.department" placeholder="所在部门"/>
                                                 </el-form-item>
                                             </el-col>
-                                            <el-col :span="5" offset="1">
-                                                <el-form-item prop="position">
-                                                    <el-input title="所在岗位" clearable v-model="item.position" placeholder="职位"></el-input>
+                                            <el-col :span="6">
+                                                <el-form-item prop="position" label="所在岗位" :label-width="labelWidth2">
+                                                    <el-input clearable v-model="item.position" placeholder="职位"/>
                                                 </el-form-item>
                                             </el-col>
-                                            <el-col :span="5" offset="1">
-                                                <el-form-item prop="worktype">
-                                                    <el-select title="实习 or 工作" clearable v-model="item.worktype" placeholder="工作类型">
+                                            <el-col :span="6">
+                                                <el-form-item prop="worktype" label="工作类型" :label-width="labelWidth2">
+                                                    <el-select clearable v-model="item.worktype" placeholder="工作还是实习">
                                                         <el-option v-for="it in worktype_web" :key="it" :label="it" :value="it"></el-option>
                                                     </el-select>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="5">
-                                                <el-form-item prop="begindate">
+                                            <el-col :span="6">
+                                                <el-form-item prop="begindate" label="入职时间" :label-width="labelWidth2">
                                                     <el-date-picker
-                                                        title="入职时间"
                                                         v-model="item.begindate"
                                                         type="date"
-                                                        placeholder="开始日期"
                                                         format="yyyy 年 MM 月 dd 日"
                                                         value-format="yyyy-MM-dd">
                                                     </el-date-picker>
                                                 </el-form-item>
                                             </el-col>
-                                            <el-col :span="5" offset="1">
-                                                <el-form-item prop="enddate">
+                                            <el-col :span="6">
+                                                <el-form-item prop="enddate" label="离职时间" :label-width="labelWidth2">
                                                     <el-date-picker
-                                                        title="离职时间"
                                                         v-model="item.enddate"
                                                         type="date"
-                                                        placeholder="结束日期 未结束不用填"
+                                                        placeholder="未结束不用填"
                                                         format="yyyy 年 MM 月 dd 日"
                                                         value-format="yyyy-MM-dd">
                                                     </el-date-picker>
                                                 </el-form-item>
                                             </el-col>
                                             <el-col :span="1">
-                                                <el-tag v-show="item.toNow_web" type="success">至今</el-tag>
+                                                <el-button type="text" :disabled="true" v-show="item.toNow_web">至今</el-button>
+                                            </el-col>
+                                            <el-col :span="2">
+                                                <el-button type="text" :disabled="true" v-show="true">{{'时长 '+item.workLength_web+'天'}}</el-button>
                                             </el-col>
                                         </el-row>
                                         <el-row>
-                                            <el-col :span="23">
-                                                <el-form-item prop="detail">
-                                                    <el-input title="具体工作详情" maxlength="600" show-word-limit class="textarea" type="textarea" :rows="8" clearable v-model="item.detail" placeholder="具体工作详情"></el-input>
+                                            <el-col :span="24">
+                                                <el-form-item prop="detail" label="工作详情" :label-width="labelWidth2">
+                                                    <el-input maxlength="600" show-word-limit class="textarea"
+                                                              type="textarea" :rows="8" clearable v-model="item.detail"
+                                                              placeholder="具体工作详情"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -348,7 +347,6 @@
                             </el-tabs>
                         </el-col>
                     </el-row>
-                    <el-divider content-position="right">工作经历End</el-divider>
 
                     <back-top/>
                 </el-main>
@@ -383,7 +381,8 @@
         created() {
             let _this = this;
             _this.$ajax.post(loginURL, {}, {emulateJSON: true}).then(function (res) {
-                if (res.data.username == null) {
+                let backStage = res.data;
+                if (backStage == '') {
                     _this.$router.push('/');
                     _this.$message({
                         message: '请先登录',
@@ -391,8 +390,13 @@
                     });
                     return;
                 }
-                //当前用户
-                _this.users = res.data;
+                if (backStage.userType == '1') {
+                    _this.users = backStage;
+                } else if (backStage.userType == '2') {
+                    _this.users = _this.$route.query.users;
+                    _this.users.id = _this.$route.query.users.userId;
+                }
+
                 //上传文件携带的数据
                 _this.uploadCarryData.username = _this.users.username;
 
@@ -409,10 +413,10 @@
                 });
 
                 //加载简历基本信息 简历基本信息不写教育经历等都删除
-                let userId = res.data.id;
+                let userId = _this.users.id;
                 console.log('用户id');
                 console.log(userId);
-                //这很关键！！
+                //关键！！！
                 _this.resume.userId = userId;
                 _this.$ajax.post('/getResumeByUserId', userId, {emulateJSON: true}).then((res) => {
                     console.log('该用户的简历基本信息');
@@ -513,9 +517,16 @@
                 _this.$set(_this.resume, 'age_web', age);
             },
 
+            begindate(newValue, oldValue) {
+                let _this = this;
+                let enddate1 = _this.work_expList[_this.work_expCurrentIndex].enddate;
+                let number = _this.iDays(newValue, enddate1);
+                _this.$set(_this.work_expList[_this.work_expCurrentIndex], 'workLength_web', number);
+            },
+
             enddate(newValue, oldValue) {
                 let _this = this;
-                console.log('ppo');
+                let begindate1 = _this.work_expList[_this.work_expCurrentIndex].begindate;
                 // 新时间
                 console.log(newValue);
                 let currentDate = new Date();
@@ -525,20 +536,13 @@
                     date: currentDate.getDate(),
                 };
                 currentDate = current_date.year + '-' + current_date.month + '-' + current_date.date;
-                console.log(currentDate);
-
-                var aDate = newValue.split("-");
-                var oDate1 = new Date(aDate[0], aDate[1], aDate[2]);
-                aDate = currentDate.split("-");
-                var oDate2 = new Date(aDate[0], aDate[1], aDate[2]);
-                //把相差的毫秒数转换为天数
-                var iDays = parseInt(Math.abs(oDate1 - oDate2) / 1000 / 60 / 60 / 24);
-                console.log('相差天数' + iDays);
-                if (iDays < 2) {
+                if (_this.iDays(currentDate, newValue) < 2) {
                     _this.$set(_this.work_expList[_this.work_expCurrentIndex], 'toNow_web', true);
                 } else {
                     _this.$set(_this.work_expList[_this.work_expCurrentIndex], 'toNow_web', false);
                 }
+                let number = _this.iDays(newValue, begindate1);
+                _this.$set(_this.work_expList[_this.work_expCurrentIndex], 'workLength_web', number);
             }
         },
         // 计算属性，也就是依赖其它的属性计算所得出最后的值
@@ -546,6 +550,10 @@
             // 简历基本信息 生日
             birthday() {
                 return this.resume.birthday;
+            },
+            //工作经历 入职时间
+            begindate() {
+                return this.work_expList[this.work_expCurrentIndex].begindate;
             },
             //工作经历 离职时间
             enddate() {
@@ -555,6 +563,8 @@
 
         data() {
             return {
+                labelWidth1: '60px',
+                labelWidth2: '90px',
                 //上传简历照片时携带到后端的数据
                 uploadCarryData: {
                     username: '',
@@ -562,6 +572,7 @@
                 },
                 //头像路径
                 imageUrl: '',
+                // 这个人的简历
                 users: {},
                 //简历完整度 页面加载、保存时更新
                 resumeIntegrity: 0,
@@ -636,7 +647,9 @@
                     //能否编辑
                     canEdit: false,
                     //至今
-                    toNow_web: false
+                    toNow_web: false,
+                    //工作月数 工作时长
+                    workLength_web: ''
                 }],
                 //工作经历对象属性集合
                 work_expFieldList: ['company', 'department', 'position', 'worktype', 'begindate', 'enddate', 'detail'],
@@ -781,7 +794,7 @@
             changeFixed(clientHeight) {
                 console.log(clientHeight);
                 // 滚动区域高度=屏幕高度-60
-                this.$refs.entirePage.$el.style.height = clientHeight - 60 + 'px';
+                this.$refs.entirePage.$el.style.height = clientHeight - 120 + 'px';
             },
             handleAvatarSuccess(res, file) {
                 console.log('点击了确认上传');
@@ -831,27 +844,6 @@
                 //这个简历的教育经历
                 _this.edu_expList[_this.edu_expCurrentIndex].resumeId = _this.resume.id;
             },
-            //移除一个教育经历 参数：要删的项的索引
-            removeEdu_exp(delIndex) {
-                let _this = this;
-                let list = _this.edu_expList;
-                if (list.length == 1) {
-                    _this.$message({
-                        type: 'error',
-                        message: '至少有一个教育经历'
-                    });
-                    return;
-                }
-                _this.edu_expCurrentIndex = delIndex;
-                if (_this.edu_expCurrentIndex === delIndex) {
-                    list.forEach((edu_exp, index) => {
-                        if (index === delIndex) {
-                            list.splice(index, 1);
-                        }
-                    });
-                }
-            },
-
             //新增项目经历
             addProject_exp() {
                 let _this = this;
@@ -871,27 +863,6 @@
                 //这个简历的项目经历
                 _this.project_expList[_this.project_expCurrentIndex].resumeId = _this.resume.id;
             },
-            //移除一个项目经历 参数：要删的项的索引
-            removeProject_exp(delIndex) {
-                let _this = this;
-                let list = _this.project_expList;
-                if (list.length == 1) {
-                    _this.$message({
-                        type: 'error',
-                        message: '至少有一个项目经历'
-                    });
-                    return;
-                }
-                _this.project_expCurrentIndex = delIndex;
-                if (_this.project_expCurrentIndex === delIndex) {
-                    list.forEach((project_exp, index) => {
-                        if (index === delIndex) {
-                            list.splice(index, 1);
-                        }
-                    });
-                }
-            },
-
             //新增工作经历
             addWork_exp() {
                 let _this = this;
@@ -917,31 +888,125 @@
                     //能否编辑
                     canEdit: false,
                     //至今
-                    toNow_web: false
+                    toNow_web: false,
+                    //工作月数 工作时长
+                    workLength_web: ''
                 });
                 _this.work_expCurrentIndex = _this.work_expList.length - 1;
                 //这个简历的工作经历
                 _this.work_expList[_this.work_expCurrentIndex].resumeId = _this.resume.id;
             },
+            //移除一个教育经历 参数：要删的项的索引
+            removeEdu_exp(delIndex) {
+                let _this = this;
+                if (_this.edu_expList.length == 1) {
+                    _this.$message({
+                        type: 'error',
+                        message: '至少有一个教育经历'
+                    });
+                    return;
+                }
+                _this.$confirm('确认删除该教育经历？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    // 提交的数据 教育经历id
+                    let eduExpId = _this.edu_expList[delIndex].id;
+                    _this.$ajax.post('/delEdu_exp', eduExpId, {emulateJSON: true}).then((res) => {
+                        _this.$message({
+                            type: 'info',
+                            message: res.data
+                        });
+                        let temp = _this.edu_expList;
+                        _this.edu_expCurrentIndex = delIndex;
+                        temp.forEach((edu_exp, index) => {
+                            if (index === delIndex) {
+                                temp.splice(index, 1);
+                            }
+                        });
+                    });
+                }).catch(() => {
+                    _this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
+            },
+
+            //移除一个项目经历 参数：要删的项的索引
+            removeProject_exp(delIndex) {
+                let _this = this;
+                if (_this.project_expList.length == 1) {
+                    _this.$message({
+                        type: 'error',
+                        message: '至少有一个项目经历'
+                    });
+                    return;
+                }
+                _this.$confirm('确认删除该项目经历？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    // 提交的数据 项目经历id
+                    let projectExpId = _this.project_expList[delIndex].id;
+                    _this.$ajax.post('/delProject_exp', projectExpId, {emulateJSON: true}).then((res) => {
+                        _this.$message({
+                            type: 'info',
+                            message: res.data
+                        });
+                        let temp = _this.project_expList;
+                        _this.project_expCurrentIndex = delIndex;
+                        temp.forEach((project_exp, index) => {
+                            if (index === delIndex) {
+                                temp.splice(index, 1);
+                            }
+                        });
+                    });
+                }).catch(() => {
+                    _this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
+            },
             //移除一个工作经历 参数：要删的项的索引
             removeWork_exp(delIndex) {
                 let _this = this;
-                let list = _this.work_expList;
-                if (list.length == 1) {
+                if (_this.work_expList.length == 1) {
                     _this.$message({
                         type: 'error',
                         message: '至少有一个工作经历'
                     });
                     return;
                 }
-                _this.work_expCurrentIndex = delIndex;
-                if (_this.work_expCurrentIndex === delIndex) {
-                    list.forEach((work_exp, index) => {
-                        if (index === delIndex) {
-                            list.splice(index, 1);
-                        }
+                _this.$confirm('确认删除该工作经历？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(() => {
+                    // 提交的数据 工作经历id
+                    let workExpId = _this.work_expList[delIndex].id;
+                    _this.$ajax.post('/delWork_exp', workExpId, {emulateJSON: true}).then((res) => {
+                        _this.$message({
+                            type: 'info',
+                            message: res.data
+                        });
+                        let temp = _this.work_expList;
+                        _this.work_expCurrentIndex = delIndex;
+                        temp.forEach((work_exp, index) => {
+                            if (index === delIndex) {
+                                temp.splice(index, 1);
+                            }
+                        });
                     });
-                }
+                }).catch(() => {
+                    _this.$message({
+                        type: 'info',
+                        message: '已取消'
+                    });
+                });
             },
             //定位到指定表单
             goAppointForm(formId) {
@@ -949,8 +1014,12 @@
                 document.querySelector(formId).scrollIntoView(true);
             },
             // 清空指定表单
-            resetForm(ref) {
+            resetForm(formData, ref) {
                 let _this = this;
+                if (formData.canEdit == false) {
+                    _this.$message.error('无效操作');
+                    return;
+                }
                 if (ref == 'edu_exp') {
                     for (var i = 0; i < _this.edu_expFieldList.length; i++) {
                         _this.$set(_this.edu_expList[_this.edu_expCurrentIndex], _this.edu_expFieldList[i], '');
@@ -1056,38 +1125,44 @@
                     }
                     return true;
                 }
+            },
+            //两个日期相差的天数 参数：2020-02-05
+            iDays: function (date1, date2) {
+                let split_d1 = date1.split("-");
+                let d2 = new Date(split_d1[0], split_d1[1], split_d1[2]);
+                split_d1 = date2.split("-");
+                var d3 = new Date(split_d1[0], split_d1[1], split_d1[2]);
+                //把相差的毫秒数转换为天数
+                return parseInt(Math.abs(d2 - d3) / 1000 / 60 / 60 / 24);
             }
         }
     }
 </script>
 
 <style lang="scss" scoped>
-    .el-menu {
-        height: 336px;
-        overflow-y: auto;
-    }
-    /*年龄标签*/
-    .el-tag {
-        height: 45px;
-        font-size: 16px;
-        line-height: 45px;
-        width: 100%;
-    }
     .el-form,.el-row,.el-tabs {
         width: 1100px;
         margin-left: auto;
         margin-right: auto;
     }
-    .el-form-item {
+    .el-form-item,.el-input {
         width: 100%;
         margin-right: auto;
         margin-left: auto;
     }
-    .el-button-group{
-        width: 100%;
+    /*https://blog.csdn.net/shijie_nihao/article/details/99884195*/
+    .dir {
+        overflow: hidden;
     }
-    .el-divider__text {
-        color: coral;
+    .el-menu {
+        height: 320px;
+        overflow-y: scroll;
+        width: 320px;
+    }
+    /*简历完整度*/
+    .el-progress {
+        width: 70%;
+        margin: 30px auto 30px auto !important;
     }
     /*简历-文本域字体大小*/
     .textarea >>> .el-textarea__inner{
@@ -1097,8 +1172,8 @@
 
     /*简历照片*/
     .avatar-uploader {
-        width: 158px;
-        height: 230px;
+        width: 145px;
+        height: 210px;
         margin-left: auto;
         margin-right: auto;
         border: 1px dashed #d9d9d9;
@@ -1113,19 +1188,28 @@
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
-        width: 158px;
-        height: 230px;
-        line-height: 230px;
+        width: 145px;
+        height: 210px;
+        line-height: 210px;
         text-align: center;
     }
     .avatar {
-        width: 158px;
-        height: 230px;
+        width: 145px;
+        height: 210px;
         display: block;
     }
     /*禁用时背景色和字体颜色*/
     .el-form :disabled {
         background-color: white;
         color: #475669;
+    }
+    /*标题*/
+    .title {
+        text-align: right;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+    .tit {
+        color: darkblue !important;
     }
 </style>
