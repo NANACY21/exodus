@@ -9,17 +9,24 @@
             </el-header>
             <el-main>
                 <el-row>
-                    <el-col :span="14">
+                    <el-col :span="12">
                         <!--走马灯-->
                         <el-carousel v-show="adVisible" :interval="2000" arrow="hover" id="el_carousel" height="400px">
                             <!--关闭广告-->
                             <el-button icon="el-icon-close" id="closeAd" @click="closeAd" title="关闭广告" type="danger" plain/>
-                            <el-carousel-item v-for="item in 4" :key="item">
+                            <el-carousel-item v-for="item in adNum" :key="item">
                                 <img :src="require('../assets/ad/'+item+'.jpg')" class="carousel_image_type">
                             </el-carousel-item>
                         </el-carousel>
                     </el-col>
-                    <el-col :span="10">
+                    <el-col :span="12">
+                        <ul class="smallImg" v-on:mouseover="pause" v-on:mouseout="start">
+                            <li v-for="item in smallAd.length">
+                                <transition name="fade">
+                                    <img v-if="showAd" :src="'https://api.mz-moe.cn/img/img'+smallAd[item-1]+'.jpg'" fit="contain"/>
+                                </transition>
+                            </li>
+                        </ul>
                     </el-col>
                 </el-row>
                 <!--职位列表-->
@@ -77,6 +84,7 @@
     import companyList from "./subComponents/companyList";
     //该请求是验证是否已登录
     const loginURL = '/isLogged';
+
     export default {
         // 注册组件
         components: {
@@ -119,9 +127,19 @@
                 }
                 console.log('用户未登录');
             });
+
+            _this.convertSmallAd();
+            // 每隔6秒执行一遍函数
+            _this.timer = setInterval(_this.convertSmallAd, 6000);
         },
         data() {
             return {
+                //发布的广告照片数量
+                adNum: 6,
+                //用于控制图片显示
+                timer: '',
+                //是否显示图片
+                showAd: true,
                 //该数据要传给[已登录]子组件 当前已登录的用户
                 users: {
                     //用户名
@@ -142,7 +160,9 @@
                 //当前职位标签页
                 positionCurrentTab: 'first',
                 //当前公司标签页
-                companyCurrentTab: 'first'
+                companyCurrentTab: 'first',
+                // 小广告图片
+                smallAd: [5, 6, 7, 8]
             };
         },
 
@@ -162,6 +182,26 @@
                 if (_this.positionCurrentTab === 'fourth') {
                     _this.$router.push({path: '/u_positionList'});
                 }
+            },
+            //换图片 小广告图片数组 变换 数组里4个元素为1-8
+            convertSmallAd() {
+                let _this = this;
+                _this.showAd = false;
+                for (let i = 0; i < _this.smallAd.length; i++) {
+                    _this.smallAd.splice(i, 1, Math.floor(Math.random() * 492));
+                }
+                // 等0.5秒再显示
+                setTimeout(() => {
+                    _this.showAd = true;
+                }, 500);
+            },
+            pause() {
+                clearInterval(this.timer);
+            },
+
+            start() {
+                //每隔6秒换一次图片
+                this.timer = setInterval(this.convertSmallAd, 6000);
             }
         }
     };
@@ -226,5 +266,32 @@
     }
     .el-carousel :hover #closeAd {
         display: block;
+    }
+
+    /*小广告图片*/
+    .smallImg {
+        list-style: none;
+        margin: 0px;
+        padding: 0px;
+    }
+    .smallImg li {
+        float: left;
+        margin: 0px;
+        padding: 0px;
+    }
+    .smallImg img {
+        height: 200px;
+        width: auto;
+        max-width: 359px;
+        margin: 0px;
+        padding: 0px;
+        border-right: 4px solid white;
+    }
+    /*淡入淡出动画*/
+    .fade-enter-active, .fade-leave-active {
+        transition: opacity .3s;
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
+        opacity: 0;
     }
 </style>

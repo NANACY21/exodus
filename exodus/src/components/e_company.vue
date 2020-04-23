@@ -115,7 +115,7 @@
         },
         data() {
             return {
-                //显示该公司的信息 接收数据 为String类型时 刷新页面数据不丢失，对象则丢失
+                //显示该公司的信息 接收数据 为String类型时 刷新页面数据不丢失，对象则丢失！！！
                 companyId: this.$route.query.companyId,
                 //头部组件
                 headerComponent: 'u_header',

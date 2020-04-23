@@ -18,7 +18,7 @@
                 </el-row>
                 <el-row>
                     <el-col :span="20" class="contentAtLeft">
-                        <span>[{{item.releaseTime}} 发布]</span>
+                        <span>{{item.releaseTime}} 发布</span>
                     </el-col>
                     <el-col :span="4" class="contentAt_right">
                         <el-popover
@@ -109,6 +109,9 @@
                 //我收藏的职位列表
                 _this.$ajax.post('/collectPositionList', _this.users.username, {emulateJSON: true}).then(function (res) {
                     let temp = res.data;
+                    if (temp.length == 0) {
+                        return;
+                    }
                     for (let i = 0; i < temp.length; i++) {
                         _this.collectPositionIdList.push(temp[i].id);
                     }
@@ -142,6 +145,10 @@
                 //我收藏的职位列表 参数还可以是：跳转页面携带数据接收数据给了子组件
                 _this.$ajax.post('/collectPositionList', _this.username, {emulateJSON: true}).then(function (res) {
                     _this.positionList = res.data;
+                    if (_this.positionList.length == 0) {
+                        _this.$message({type: 'info', message: '没有任何收藏'});
+                        return;
+                    }
                     for (let i = 0; i < _this.positionList.length; i++) {
                         _this.collectPositionIdList.push(_this.positionList[i].id);
                     }
@@ -195,14 +202,16 @@
                 let _this = this;
                 console.log(item);
                 let collected = _this.collectPositionIdList.indexOf(item.id);
+                // 对象转字符串
+                let position = JSON.stringify(item);
                 //携带数据
                 _this.$router.push({
-                    path: '/e_position',
-                    query: {position: item, action: 'u_see', collected: collected}
+                    name: 'e_position',
+                    query: {position: position, action: 'u_see', collected: collected}
                 });
             },
 
-            //去聊天 消息通知列表
+            //去聊天 消息通知列表 参数 对方的用户名
             gochat(withUsername) {
                 let _this = this;
                 console.log(withUsername);
@@ -250,7 +259,7 @@
                 };
                 //登录才能收藏
                 if (typeof (_this.users.username) == 'undefined') {
-                    _this.$message({type: 'warning', message: '请先登录'});
+                    _this.$message({type: 'error', message: '请登录'});
                     return;
                 }
                 _this.$ajax.post('/collectPosition', map, {emulateJSON: true}).then((res) => {

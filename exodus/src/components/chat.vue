@@ -27,7 +27,7 @@
                         <el-col :span="10" class="username">
                             {{key}}<br/>
                             <span v-if="value[value.length-1]">
-                                {{value[value.length-1].msgContent}}
+                                {{value[value.length-1].content}}
                             </span>
                         </el-col>
                         <el-col :span="8" class="time">
@@ -52,13 +52,13 @@
                                     <el-avatar shape="square" v-if="users" :size="40" :src="item.from == users.username?myAvatarUrl:objAvatarUrl[currentObj.key]"/>
                                 </el-col>
                                 <el-col class="oneMsg" :span="9" :style="item.from == users.username?'float:right;text-align: right;':'float:left;text-align: left;'">
-                                    {{item.msgContent}}
+                                    {{item.content}}
                                 </el-col>
                             </el-row>
                         </div>
                         <el-row>
                             <el-col :span="18">
-                                <el-input @keyup.enter.native="sendMessage" v-model="message.msgContent"
+                                <el-input @keyup.enter.native="sendMessage" v-model="message.content"
                                           placeholder="说点什么吧"/>
                             </el-col>
                             <el-col :span="6">
@@ -102,8 +102,8 @@
                 deep: true,
                 handler: function (newVal, oldVal) {
                     let _this = this;
-                    let msgContent = newVal.msgContent;
-                    if (typeof (msgContent) != 'undefined' && msgContent.length != 0) {
+                    let content = newVal.content;
+                    if (typeof (content) != 'undefined' && content.length != 0) {
                         _this.sendButton = true;
                     } else {
                         _this.sendButton = false;
@@ -144,10 +144,12 @@
                 // 当前用户 我
                 users: {},
                 message: {
+                    // 发送者用户名
                     from: '',
+                    // 接收者用户名
                     to: '',
-                    //发送的内容
-                    msgContent: ''
+                    //发送的消息内容
+                    content: ''
                 },
                 //发送按钮能否编辑
                 sendButton: false,
@@ -163,7 +165,7 @@
                 _this.users = res.data;
                 let username = _this.users.username;
                 if (typeof (username) == 'undefined' || username.length == 0) {
-                    _this.$message({type: "info", message: '暂无消息'});
+                    _this.$message({type: "error", message: '请先登录'});
                     _this.$router.go(-1);
                     return;
                 }
@@ -177,9 +179,10 @@
                 };
                 //这里 没采取 map新增属性（新增key）！！！ 的方式
                 _this.$ajax.post('/messageList', map, {emulateJSON: true}).then(function (res) {
-                    console.log("这个人的消息列表");
-                    console.log(res.data);
+                    // _this.users.username的消息列表
                     _this.messageList = res.data;
+                    //联系人个数
+                    let objCount = 0;
                     //是否指定了聊天对象 起到定位作用
                     if (typeof (withUsername) != 'undefined') {
                         _this.switchChatObj(withUsername, _this.currentObj.rowindex);
@@ -205,9 +208,13 @@
                             console.log('对方头像');
                             console.log(_this.objAvatarUrl);
                         });
+                        objCount = objCount + 1;
                     }
                     _this.pullMsg.close();
                     console.log('刷新成功');
+                    if (objCount == 0) {
+                        _this.$message({type: 'info', message: '暂无消息'});
+                    }
                 }).catch(function (error) {
                     //关闭加载
                     _this.pullMsg.close();
@@ -246,7 +253,7 @@
                     spinner: 'el-icon-loading',
                     background: 'rgba(0, 0, 0, 0.7)'
                 });
-                // 定时器 定2秒
+                //从现在开始计时2秒后做这件事 定时器
                 setTimeout(() => {
 
                 }, 2000);

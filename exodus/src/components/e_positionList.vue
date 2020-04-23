@@ -279,8 +279,8 @@
                     //该地点需求人数
                     num: '',
                 }],
-                // 职位列表表格复选框选中的
-                multipleSelection: [],
+                // 职位列表表格复选框选中的职位列表
+                selectedPositionList: [],
                 //表格加载数据
                 loading: true,
                 //过滤职位列表
@@ -384,8 +384,10 @@
                 console.log(rowData);
                 let action = '';
                 _this.control.e_ ? action = 'e_see' : action = 'u_see';
+                // 对象转字符串
+                let position = JSON.stringify(rowData);
                 //携带数据
-                _this.$router.push({path: '/e_position', query: {position: rowData, action: action}});
+                _this.$router.push({path: '/e_position', query: {position: position, action: action}});
             },
             //编辑职位
             editPosition(index, rowData) {
@@ -393,49 +395,47 @@
                 //携带数据
                 this.$router.push({path: '/e_position', query: {position: rowData, action: 'e_edit'}});
             },
-            //删除职位
+            //删除职位 参数：index没有使用 rowData某一行职位
             delPosition(index, rowData) {
                 let _this = this;
-                console.log(index);
                 console.log(rowData);
-                //求职者投递箱
-                if (_this.control.e_ == false) {
-                    let map = {
-                        "userId": _this.commitData.id,
-                        "positionId": rowData.id
-                    };
-                    _this.$ajax.post('/deletePost', map, {emulateJSON: true}).then((res) => {
-                        _this.$message({type: 'success', message: res.data});
-                    });
-                    return;
-                }
-                //选中的职位id
-                var positionIds = [];
+                //选中的要删除的职位id
+                let positionIds = [];
+                //请求的url、提交的数据
+                let requestUrl,
+                    commitdata;
+                // 是批量删除
                 if (typeof (rowData) == 'undefined') {
-                    console.log('批量删除');
-                    if (_this.multipleSelection.length == 0) {
+                    if (_this.selectedPositionList.length == 0) {
                         _this.$message({
                             type: 'error',
-                            message: '请选择职位'
+                            message: '请选择要删除的职位'
                         });
                         return;
                     }
-                    for (var i = 0; i < _this.multipleSelection.length; i++) {
-                        console.log(_this.multipleSelection[i].id);
-                        positionIds[i] = _this.multipleSelection[i].id;
+                    for (let i = 0; i < _this.selectedPositionList.length; i++) {
+                        positionIds[i] = _this.selectedPositionList[i].id;
                     }
-                } else {
-                    console.log('删除一条');
-                    console.log(rowData.id);
+                }
+                // 是删除一条
+                else {
                     positionIds[0] = rowData.id;
                 }
-                console.log('要删除的职位id');
-                console.log(positionIds);
-                _this.$ajax.post('/delPosition', positionIds, {emulateJSON: true}).then((res) => {
-                    _this.$message({
-                        type: 'info',
-                        message: res.data
-                    });
+                //求职者-投递箱
+                if (_this.control.e_ == false) {
+                    requestUrl = '/deletePost';
+                    commitdata = {
+                        "userId": _this.commitData.id,
+                        "positionIds": positionIds
+                    };
+                }
+                //企业版-职位列表
+                else {
+                    requestUrl = '/delPosition';
+                    commitdata = positionIds;
+                }
+                _this.$ajax.post(requestUrl, commitdata, {emulateJSON: true}).then((res) => {
+                    _this.$message({type: 'info', message: res.data});
                 });
             },
             //发布/撤回职位
@@ -457,7 +457,7 @@
             // 点击职位列表表格复选框时
             handleSelectionChange(val) {
                 // console.log(val);
-                this.multipleSelection = val;
+                this.selectedPositionList = val;
             },
             //投递进度
             postStep(step) {

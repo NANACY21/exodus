@@ -13,17 +13,17 @@
                 <el-row>
                     <el-col :span="24" style="text-align: right">
                         <el-button-group>
-                            <el-button class="tit" plain :disabled="true">{{this.control.title}}</el-button>
-                            <el-button v-show="control.e_" plain type="primary" icon="el-icon-plus" @click="addCity" :disabled="control.isSee">工作地点</el-button>
-                            <el-button v-show="control.e_" plain type="success" icon="el-icon-plus"
+                            <el-button class="tit" title="职位名称" plain :disabled="true">{{this.control.title}}</el-button>
+                            <el-button v-show="control.e_" type="primary" icon="el-icon-plus" @click="addCity" :disabled="control.isSee">工作地点</el-button>
+                            <el-button v-show="control.e_" type="success" icon="el-icon-plus"
                                        @click="submitForm('position')" :disabled="control.isSee"
                                        v-loading.fullscreen.lock="addingPosition">
                                 {{control.submitButtonInfo}}
                             </el-button>
-                            <el-button v-show="control.e_" plain type="warning" icon="el-icon-refresh-right" @click="resetForm('position')" :disabled="control.isSee">重置</el-button>
-                            <el-button v-show="!control.e_" plain type="success" icon="el-icon-message" @click="postResume" title="不能重复投递">投递</el-button>
-                            <el-button v-show="!control.e_" @click="collectPosition" plain type="success" :icon="collected>-1?icon1:icon2">{{collected>-1?'已收藏':'收藏'}}</el-button>
-                            <el-button plain type="info" icon="el-icon-close" @click="cancel">取消</el-button>
+                            <el-button v-show="control.e_" type="warning" icon="el-icon-refresh-right" @click="resetForm('position')" :disabled="control.isSee">重置</el-button>
+                            <el-button v-show="!control.e_" type="primary" icon="el-icon-message" @click="postResume" title="不能重复投递">投递</el-button>
+                            <el-button v-show="!control.e_" @click="collectPosition" type="success" :icon="collected>-1?icon1:icon2">{{collected>-1?'已收藏':'收藏'}}</el-button>
+                            <el-button type="info" icon="el-icon-close" @click="cancel">取消</el-button>
                         </el-button-group>
                     </el-col>
                 </el-row>
@@ -177,9 +177,9 @@
             });
 
             //进入该卡片的动作
-            var action = _this.$route.query.action;
+            let action = _this.$route.query.action;
             //传到该页面的数据
-            var tempPosition = _this.$route.query.position;
+            let tempPosition = JSON.parse(_this.$route.query.position);
             _this.collected = _this.$route.query.collected;
 
             //企业版 添加职位
@@ -194,16 +194,16 @@
                 _this.$set(_this.position, 'name', tempPosition.name);
                 _this.$set(_this.position, 'detail', tempPosition.detail);
                 //北京(10)上海(5) -> 北京#上海#
-                var tempCity = tempPosition.city.replace(/\([^\)]*\)/g, "#");
-                var cities = tempCity.split('#');
-                var nums = tempPosition.needNum.split('#');
+                let tempCity = tempPosition.city.replace(/\([^\)]*\)/g, "#");
+                let cities = tempCity.split('#');
+                let nums = tempPosition.needNum.split('#');
                 console.log('城市数组');
                 console.log(cities);
                 console.log('人数数组');
                 console.log(nums);
                 //删除数组初始的一项
                 _this.cityAndNum.splice(0, 1);
-                for (var i = 0; i < cities.length - 1; i++) {
+                for (let i = 0; i < cities.length - 1; i++) {
                     //初始化变量以解决未定义问题
                     // _this.cityAndNum[i] = {};
                     // _this.$set(_this.cityAndNum[i], {});
@@ -503,8 +503,11 @@
             //申请职位，投递简历
             postResume() {
                 let _this = this;
-                console.log(_this.position.id);
                 let job_apply = {userId: _this.users.id, positionId: _this.position.id};
+                if (_this.users == '' || _this.position.id == '') {
+                    _this.$message({type: 'error', message: '请先登录'});
+                    return;
+                }
                 _this.$ajax.post('/postResume', job_apply, {emulateJSON: true}).then((res) => {
                     _this.$message({type: 'info', message: res.data});
                 });
@@ -531,9 +534,8 @@
 <style scoped>
     /*标题*/
     .tit {
-        background-color: #67C23A !important;
-        color: #475669 !important;
-        font-weight: bold;
+        color: darkblue !important;
+        background: aliceblue !important;
     }
     .el-form,.el-row {
         width: 1200px;

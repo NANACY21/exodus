@@ -277,9 +277,12 @@
                 positionList: [{}],
                 //消息
                 message: {
+                    // 发送者用户名
                     from: '',
+                    // 接收者用户名
                     to: '',
-                    msgContent: 'hi，你好，很高兴认识你！'
+                    //消息内容
+                    content: 'hi，你好，很高兴认识你！'
                 },
                 //某个人（简历）投递的职位名称列表
                 positionNameList: [{

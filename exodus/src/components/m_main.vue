@@ -47,8 +47,8 @@
                             <el-col :span="18">
                                 <div class="chartArea" style="overflow-y: scroll">
                                     <el-upload
-                                        v-for="item in 4" :key="item"
-                                        title="点击以更换广告图片"
+                                        v-for="item in adNum" :key="item"
+                                        title="点击以更换广告图片，最好是1920*1080的"
                                         action="http://localhost:8088/uploadPhoto"
                                         multiple
                                         accept=".jpg,.jpeg,.png,.gif,.bmp,.pdf,.JPG,.JPEG,.PBG,.GIF,.BMP,.PDF"
@@ -92,6 +92,8 @@
 
         data() {
             return {
+                //广告图片总数
+                adNum: 6,
                 //已登录在线用户数量
                 onlineCount: '',
                 //更换广告图片时携带到后端的数据
@@ -145,7 +147,7 @@
                     _this.onlineCount = res.data;
                 });
             },
-            //点击广告图片
+            //点击广告图片！！！
             clickAd(item) {
                 let _this = this;
                 console.log(item);
