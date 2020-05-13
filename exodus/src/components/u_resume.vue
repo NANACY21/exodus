@@ -104,7 +104,8 @@
                             </el-col>
                             <el-col :span="6">
                                 <el-form-item prop="location" label="现住址" :label-width="labelWidth2">
-                                    <el-input v-model="resume.location" placeholder="现居地 所在地" clearable/>
+                                    <el-input v-model="resume.location" placeholder="现居地 所在地"
+                                              title="招聘者不关心求职者所在地，关心求职者目标城市" clearable/>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="6">

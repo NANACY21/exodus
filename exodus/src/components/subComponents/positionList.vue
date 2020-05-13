@@ -1,7 +1,9 @@
 <!--[职位列表子组件] 使用场景：
-默认主页 (加载最新发布的职位)
+默认主页（加载最新发布的职位）
 求职者的职位列表
-我的收藏-->
+我的收藏
+求职者全局站内搜索
+-->
 <template>
     <div>
         <el-card class="position-card" shadow="hover" v-for="item in positionList" :key="item">
@@ -9,7 +11,7 @@
                 <el-row>
                     <el-col :span="12" class="contentAtLeft">
                         <el-link :underline="false" @click="seePosition(item)">
-                            {{item.name}}工程师
+                            {{item.name}}
                         </el-link>
                     </el-col>
                     <el-col :span="12" class="contentAtRight">
@@ -132,6 +134,14 @@
                 });
             }
             else if (currentPath == '/u_positionList') {
+                //如果是求职者全局站内搜索的情况
+                if (localStorage.getItem('positionList') != null) {
+                    console.log('如果是求职者全局站内搜索的情况');
+                    _this.positionList = JSON.parse(localStorage.getItem('positionList'));
+                    _this.pageBean.show_el_pagination = false;
+                    localStorage.removeItem('positionList');
+                    return;
+                }
                 //符合当前查询条件的职位总数
                 _this.$ajax.post('/getReleasePositionListLength', _this.currentFilterNative, {emulateJSON: true}).then(function (res) {
                     _this.pageBean.currentListLength = res.data;
@@ -173,7 +183,7 @@
 
                     currentPage: 1,
                     //查询符合条件的职位个数 显示的职位数量 查询条数
-                    pageSize: 5
+                    pageSize: 10
                 },
                 //已发布职位列表
                 positionList: [],

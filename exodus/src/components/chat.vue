@@ -1,4 +1,4 @@
-<!--使用场景：私聊、系统消息 的消息列表
+<!--使用场景：客户间私聊、系统消息 的消息列表
 
 访问该页面 2种情况 指定聊天对象了 没指定聊天对象！！！
 
@@ -51,7 +51,7 @@
                                 <el-col :span="3" :style="item.from == users.username?'float:right':'float:left'">
                                     <el-avatar shape="square" v-if="users" :size="40" :src="item.from == users.username?myAvatarUrl:objAvatarUrl[currentObj.key]"/>
                                 </el-col>
-                                <el-col class="oneMsg" :span="9" :style="item.from == users.username?'float:right;text-align: right;':'float:left;text-align: left;'">
+                                <el-col class="oneMsg" :span="9" :style="item.from == users.username?'float:right;text-align: right;background: lawngreen;':'float:left;text-align: left;'">
                                     {{item.content}}
                                 </el-col>
                             </el-row>
@@ -165,7 +165,7 @@
                 _this.users = res.data;
                 let username = _this.users.username;
                 if (typeof (username) == 'undefined' || username.length == 0) {
-                    _this.$message({type: "error", message: '请先登录'});
+                    _this.$message({type: "error", message: '请登录'});
                     _this.$router.go(-1);
                     return;
                 }
@@ -412,8 +412,10 @@
     }
     .oneMsg {
         background: white;
+        padding: 10px;
+        border-radius: 5px;
     }
     .oneMsg:hover {
-        background: lightgray;
+        background: #d3dce6;
     }
 </style>

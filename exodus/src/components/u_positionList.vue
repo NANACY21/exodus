@@ -22,7 +22,7 @@
                         </el-col>
                         <el-col :span="4" class="contentAtLeft">
                             <el-cascader
-                                :options="allTradeTreeRoot"
+                                :options="positionSelector.options"
                                 :props="{ expandTrigger: 'hover' }"
                                 @change="handleChange"
                                 clearable>
@@ -52,6 +52,8 @@
                 <component :is="footerComponent"/>
             </el-footer>
         </el-container>
+
+        <back-top/>
     </div>
 </template>
 
@@ -72,8 +74,8 @@
         mounted() {
             let _this = this;
             //加载供搜索的行业、职位
-            _this.$ajax.get('/getAllTradeTreeRoot').then(function (res) {
-                _this.allTradeTreeRoot = res.data;
+            _this.$ajax.post('/readJSONFile', "allTradeTreeRoot").then(function (res) {
+                _this.positionSelector = res.data;
             });
         },
 
@@ -97,12 +99,12 @@
                 //职位列表组件
                 positionListComponent: 'positionList',
 
-                //所有行业树根节点
-                allTradeTreeRoot: [],
+                //职位选择器
+                positionSelector: {},
                 //过滤条件
                 filter: {
                     //工作地点
-                    city: ['全国', '北京', '上海', '广州', '深圳', '杭州'],
+                    city: ['全国', '北京市', '上海市', '广州市', '深圳市', '杭州市'],
                     //工作经验
                     workExp: ['不限', '应届毕业生', '3年及以下', '3-5年', '5-10年', '10年以上', '不要求'],
                     //学历要求

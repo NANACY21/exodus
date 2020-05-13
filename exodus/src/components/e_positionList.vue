@@ -44,7 +44,10 @@
                     </el-col>
                     <el-col :span="3" :offset="control.offset">
                         <el-button-group>
-                            <el-button v-show="control.e_" type="primary" plain icon="el-icon-plus" @click="e_position" title="新增职位">新增</el-button>
+                            <el-button v-show="control.e_" type="primary" plain icon="el-icon-plus" @click="e_position"
+                                       title="新增职位 职位可以由一或多个岗位组成">
+                                新增
+                            </el-button>
                             <el-button type="danger" plain icon="el-icon-delete" @click="delPosition" title="批量删除职位">删除</el-button>
                         </el-button-group>
                     </el-col>
@@ -81,7 +84,7 @@
                         label="职位名称"
                         width="108">
                         <template slot-scope="scope">
-                            <el-link @click="seePosition(scope.$index, scope.row)" :underline="false">{{ scope.row.name }}</el-link>
+                            <el-link @click="seePosition(scope.$index, scope.row)" :underline="false" title="查看职位">{{ scope.row.name }}</el-link>
                         </template>
                     </el-table-column>
                     <el-table-column
@@ -158,7 +161,7 @@
                                     </el-button>
                                     <el-button size="small" plain v-show="scope.row.del && control.e_"
                                                @click="changePositionStatus(scope.$index, scope.row,1)" type="success"
-                                               title="发布该职位" icon="el-icon-s-promotion">
+                                               title="企业发布该职位" icon="el-icon-s-promotion">
                                         发布
                                     </el-button>
                                     <el-button size="small" plain v-show="scope.row.del && control.e_"
@@ -391,9 +394,30 @@
             },
             //编辑职位
             editPosition(index, rowData) {
+                let _this = this;
                 console.log(rowData);
-                //携带数据
-                this.$router.push({path: '/e_position', query: {position: rowData, action: 'e_edit'}});
+                // 职位已经发布不能修改
+                if (rowData.status == '已发布') {
+                    _this.$confirm('该职位已经发布，必须撤回才能编辑职位，是否撤回该职位？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        _this.changePositionStatus(index, rowData, 0);
+                        let position = JSON.stringify(rowData);
+                        //携带数据
+                        _this.$router.push({path: '/e_position', query: {position: position, action: 'e_edit'}});
+                    }).catch(() => {
+                        _this.$message({
+                            type: 'info',
+                            message: '已取消'
+                        });
+                    });
+                } else {
+                    let position = JSON.stringify(rowData);
+                    //携带数据
+                    _this.$router.push({path: '/e_position', query: {position: position, action: 'e_edit'}});
+                }
             },
             //删除职位 参数：index没有使用 rowData某一行职位
             delPosition(index, rowData) {
@@ -448,6 +472,7 @@
                     "status": status
                 };
                 _this.$ajax.post('/changePositionStatus', map, {emulateJSON: true}).then((res) => {
+                    status == 1 ? rowData.status = '已发布' : rowData.status = '未发布';
                     _this.$message({
                         type: 'info',
                         message: res.data

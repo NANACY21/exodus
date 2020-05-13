@@ -1,4 +1,7 @@
-<!--[招聘者-企业版]主页-->
+<!--
+[招聘者-企业版]主页
+招聘者主要对象：人（简历）
+-->
 <template>
     <div>
         <el-container>
@@ -35,7 +38,7 @@
                     <el-table-column type="expand">
                         <template slot-scope="scope">
                             <el-form label-position="left" inline class="demo-table-expand">
-                                <el-form-item label="姓名">
+                                <el-form-item label="姓名" title="求职者奔公司去的">
                                     <span>{{ scope.row.name }}</span>
                                 </el-form-item>
                                 <el-form-item label="年龄">

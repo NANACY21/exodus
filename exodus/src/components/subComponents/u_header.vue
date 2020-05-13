@@ -26,7 +26,7 @@
             </el-col>
             <el-col :span="colSpan" style="text-align: right">
                 <div class="grid-content bg-purple">
-                    <!--根据是否已经登录加载不同组件 若已登录则向子组件传数据-->
+                    <!--根据是否已经登录加载不同组件 若已登录则向子组件传数据 求职者已登录：u_header组件向logged组件传数据-->
                     <component v-bind:users="users" :is="loggedComponent"/>
                 </div>
             </el-col>
@@ -73,24 +73,24 @@
                     } else if (_this.users.userType == '3') {
                         _this.theme = 'm_theme';
                     }
-                }
 
-                // 加载站内搜索历史记录
-                _this.$ajax.post('/getSearchHistory', _this.users.username, {emulateJSON: true}).then(function (res) {
-                    let temp = res.data;
-                    console.log('搜索历史');
-                    if (temp.length != 0) {
-                        for (let i = 0; i < temp.length; i++) {
+                    // 加载站内搜索历史记录
+                    _this.$ajax.post('/getSearchHistory', _this.users.username, {emulateJSON: true}).then(function (res) {
+                        let temp = res.data;
+                        console.log('搜索历史');
+                        if (temp.length != 0) {
+                            for (let i = 0; i < temp.length; i++) {
+                                _this.searchHistory.push({
+                                    value: temp[i]
+                                })
+                            }
                             _this.searchHistory.push({
-                                value: temp[i]
-                            })
+                                value: '清空历史记录'
+                            });
                         }
-                        _this.searchHistory.push({
-                            value: '清空历史记录'
-                        });
-                    }
-                    console.log(_this.searchHistory);
-                });
+                        console.log(_this.searchHistory);
+                    });
+                }
             });
 
             //面包屑相关 https://www.cnblogs.com/houzheng/p/9067110.html
@@ -163,11 +163,10 @@
             };
         },
         methods: {
-            //站内搜索
+            //全局站内搜索
             search() {
                 let _this = this;
                 if (_this.searchContent.length == 0) {
-                    _this.$message({type: 'info', message: '无效'});
                     return;
                 }
                 let temp = {
@@ -175,7 +174,15 @@
                     "searchContent": _this.searchContent
                 };
                 _this.$ajax.post('/globalSearch', temp, {emulateJSON: true}).then((res) => {
-                    console.log(res.data);
+                    //搜索到的职位列表
+                    let positionList = res.data;
+                    //把搜索到的职位列表存起来
+                    localStorage.setItem('positionList', JSON.stringify(positionList));
+                    if (_this.$route.path === '/u_positionList') {
+                        _this.$router.go(0);
+                        return;
+                    }
+                    _this.$router.push({path: '/u_positionList'});
                 });
             },
             //站内搜索历史记录相关 该函数 点击搜索框触发
@@ -273,7 +280,7 @@
         height: 45px;
         line-height: 45px;
     }
-    .el-select {
+    .el-cascader {
         width: 100%;
     }
     /*el-dialog浏览器居中固定*/

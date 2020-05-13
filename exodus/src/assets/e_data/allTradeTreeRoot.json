@@ -1,0 +1,288 @@
+{
+    "options": [{
+        "value": "IT",
+        "label": "IT",
+        "children": [{
+            "value": "开发",
+            "label": "开发",
+            "children": [{
+                "value": "前端开发",
+                "label": "前端开发",
+                "children": [{
+                    "value": "Web前端开发工程师",
+                    "label": "Web前端开发工程师"
+                }]
+            },{
+                "value": "后端开发",
+                "label": "后端开发",
+                "children": [{
+                    "value": "Java开发工程师",
+                    "label": "Java开发工程师"
+                },{
+                    "value": "C++开发工程师",
+                    "label": "C++开发工程师"
+                },{
+                    "value": "大数据开发工程师",
+                    "label": "大数据开发工程师"
+                }]
+            },{
+                "value": "移动开发",
+                "label": "移动开发",
+                "children": [{
+                    "value": "Android开发工程师",
+                    "label": "Android开发工程师"
+                }]
+            },{
+                "value": "人工智能",
+                "label": "人工智能"
+            },{
+                "value": "DBA",
+                "label": "DBA"
+            },{
+                "value": "硬件开发",
+                "label": "硬件开发",
+                "children": [{
+                    "value": "硬件开发工程师",
+                    "label": "硬件开发工程师"
+                }]
+            },{
+                "value": "软件工程师",
+                "label": "软件工程师"
+            },{
+                "value": "云计算工程技术人员",
+                "label": "云计算工程技术人员"
+            },{
+                "value": "数据库工程师",
+                "label": "数据库工程师"
+            },{
+                "value": "软件架构师",
+                "label": "软件架构师"
+            }]
+        }, {
+            "value": "测试",
+            "label": "测试",
+            "children": [{
+                "value": "功能测试",
+                "label": "功能测试"
+            },{
+                "value": "性能测试",
+                "label": "性能测试"
+            },{
+                "value": "自动化测试",
+                "label": "自动化测试"
+            },{
+                "value": "硬件测试工程师",
+                "label": "硬件测试工程师"
+            }]
+        },{
+            "value": "运维",
+            "label": "运维",
+            "children": [{
+                "value": "Linux运维",
+                "label": "Linux运维"
+            },{
+                "value": "Python自动化运维",
+                "label": "Python自动化运维"
+            }]
+        },{
+            "value": "产品",
+            "label": "产品",
+            "children": [{
+                "value": "产品经理",
+                "label": "产品经理",
+                "children": [{
+                    "value": "产品经理",
+                    "label": "产品经理"
+                }]
+            }]
+        },{
+            "value": "运营",
+            "label": "运营",
+            "children": [{
+                "value": "数据运营",
+                "label": "数据运营"
+            },{
+                "value": "产品运营",
+                "label": "产品运营"
+            },{
+                "value": "用户运营",
+                "label": "用户运营"
+            }]
+        },{
+            "value": "设计",
+            "label": "设计",
+            "children": [{
+                "value": "UI设计",
+                "label": "UI设计"
+            },{
+                "value": "系统分析员",
+                "label": "系统分析员"
+            }]
+        }]
+    },{
+        "value": "金融",
+        "label": "金融"
+    },{
+        "value": "保险业",
+        "label": "保险业"
+    },{
+        "value": "采矿业",
+        "label": "采矿业"
+    },{
+        "value": "能源",
+        "label": "能源"
+    },{
+        "value": "餐饮",
+        "label": "餐饮"
+    },{
+        "value": "服装业",
+        "label": "服装业"
+    },{
+        "value": "服务",
+        "label": "服务"
+    },{
+        "value": "房地产",
+        "label": "房地产"
+    },{
+        "value": "电讯业",
+        "label": "电讯业"
+    },{
+        "value": "宾馆",
+        "label": "宾馆"
+    },{
+        "value": "公益组织",
+        "label": "公益组织"
+    },{
+        "value": "广告业",
+        "label": "广告业"
+    },{
+        "value": "航空航天",
+        "label": "航空航天"
+    },{
+        "value": "化学",
+        "label": "化学"
+    },{
+        "value": "健康",
+        "label": "健康"
+    },{
+        "value": "保健",
+        "label": "保健"
+    },{
+        "value": "建筑业",
+        "label": "建筑业"
+    },{
+        "value": "教育",
+        "label": "教育"
+    },{
+        "value": "培训",
+        "label": "培训"
+    },{
+        "value": "计算机",
+        "label": "计算机"
+    },{
+        "value": "金属冶炼",
+        "label": "金属冶炼"
+    },{
+        "value": "警察",
+        "label": "警察"
+    },{
+        "value": "消防",
+        "label": "消防"
+    },{
+        "value": "军人",
+        "label": "军人"
+    },{
+        "value": "会计",
+        "label": "会计"
+    },{
+        "value": "美容",
+        "label": "美容"
+    },{
+        "value": "媒体",
+        "label": "媒体"
+    },{
+        "value": "出版",
+        "label": "出版"
+    },{
+        "value": "木材",
+        "label": "木材"
+    },{
+        "value": "造纸",
+        "label": "造纸"
+    },{
+        "value": "零售业",
+        "label": "零售业"
+    },{
+        "value": "批发业",
+        "label": "批发业"
+    },{
+        "value": "农业",
+        "label": "农业"
+    },{
+        "value": "旅游业",
+        "label": "旅游业"
+    },{
+        "value": "司法",
+        "label": "司法"
+    },{
+        "value": "律师",
+        "label": "律师"
+    },{
+        "value": "司机",
+        "label": "司机"
+    },{
+        "value": "体育运动",
+        "label": "体育运动"
+    },{
+        "value": "学术研究",
+        "label": "学术研究"
+    },{
+        "value": "演艺",
+        "label": "演艺"
+    },{
+        "value": "医疗服务",
+        "label": "医疗服务"
+    },{
+        "value": "艺术",
+        "label": "艺术"
+    },{
+        "value": "设计",
+        "label": "设计"
+    },{
+        "value": "银行",
+        "label": "银行"
+    },{
+        "value": "音乐舞蹈",
+        "label": "音乐舞蹈"
+    },{
+        "value": "邮政快递",
+        "label": "邮政快递"
+    },{
+        "value": "运输业",
+        "label": "运输业"
+    },{
+        "value": "政府机关",
+        "label": "政府机关"
+    },{
+        "value": "机械制造",
+        "label": "机械制造"
+    },{
+        "value": "咨询",
+        "label": "咨询"
+    },{
+        "value": "林业",
+        "label": "林业"
+    },{
+        "value": "牧业",
+        "label": "牧业"
+    },{
+        "value": "渔业",
+        "label": "渔业"
+    },{
+        "value": "制造业",
+        "label": "制造业"
+    },{
+        "value": "电力、热力、燃气及水生产和供应业",
+        "label": "电力、热力、燃气及水生产和供应业"
+    }]
+}

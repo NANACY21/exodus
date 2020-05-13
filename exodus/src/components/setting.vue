@@ -23,6 +23,9 @@
                             <i class="el-icon-view"/>
                             <span slot="title">隐藏简历</span>
                         </el-menu-item>
+                        <el-menu-item index="4" title="用户身份要认证，如：求职者，hr">
+                            <span slot="title">实名认证</span>
+                        </el-menu-item>
                     </el-menu>
                 </el-aside>
                 <el-main>

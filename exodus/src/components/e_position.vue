@@ -11,7 +11,7 @@
             </el-header>
             <el-main>
                 <el-row>
-                    <el-col :span="24" style="text-align: right">
+                    <el-col :span="24" class="title">
                         <el-button-group>
                             <el-button class="tit" title="职位名称" plain :disabled="true">{{this.control.title}}</el-button>
                             <el-button v-show="control.e_" type="primary" icon="el-icon-plus" @click="addCity" :disabled="control.isSee">工作地点</el-button>
@@ -21,7 +21,7 @@
                                 {{control.submitButtonInfo}}
                             </el-button>
                             <el-button v-show="control.e_" type="warning" icon="el-icon-refresh-right" @click="resetForm('position')" :disabled="control.isSee">重置</el-button>
-                            <el-button v-show="!control.e_" type="primary" icon="el-icon-message" @click="postResume" title="不能重复投递">投递</el-button>
+                            <el-button v-show="!control.e_" type="primary" icon="el-icon-message" @click="postResume" title="求职者申请职位，不能重复投递">投递</el-button>
                             <el-button v-show="!control.e_" @click="collectPosition" type="success" :icon="collected>-1?icon1:icon2">{{collected>-1?'已收藏':'收藏'}}</el-button>
                             <el-button type="info" icon="el-icon-close" @click="cancel">取消</el-button>
                         </el-button-group>
@@ -29,12 +29,13 @@
                 </el-row>
                 <el-form :model="position" :rules="positionRule" ref="position" :disabled="control.isSee">
                     <el-row>
-                        <el-col :span="6">
+                        <el-col :span="12">
                             <el-form-item prop="name" label="职位名称" :label-width="labelWidth2">
                                 <el-cascader
                                     placeholder="选择职位"
+                                    filterable
                                     v-model="position.name"
-                                    :options="allTradeTreeRoot"
+                                    :options="positionSelector.options"
                                     :props="{ expandTrigger: 'hover' }"
                                     @change="handleChange"
                                     clearable/>
@@ -55,15 +56,18 @@
                         </el-col>
                     </el-row>
                     <el-row>
-                        <el-col :span="12" v-show="!control.e_">
+                        <el-col :span="24" v-show="!control.e_">
                             <el-form-item prop="companyInfo" label="公司简介" :label-width="labelWidth2">
-                                <el-input class="textarea" type="textarea" :rows="8" v-model="position.companyInfo"/>
+                                <el-input class="textarea" type="textarea" :rows="12" v-model="position.companyInfo"/>
                             </el-form-item>
                         </el-col>
-                        <el-col :span="12">
+                    </el-row>
+                    <el-row>
+                        <el-col :span="24">
                             <el-form-item prop="detail" label="职位要求" :label-width="labelWidth2">
-                                <el-input class="textarea" type="textarea" :rows="8" placeholder="职位详细信息"
-                                          v-model="position.detail" clearable/>
+                                <el-input class="textarea" type="textarea" :rows="12" placeholder="职位详细信息"
+                                          v-model="position.detail" clearable
+                                          maxlength="600" show-word-limit/>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -72,7 +76,6 @@
                             <el-form-item label="工作地点" :label-width="labelWidth2">
                                 <el-cascader
                                     placeholder="选择工作城市"
-                                    :show-all-levels="false"
                                     filterable
                                     v-model="item.city"
                                     :options="citySelector.options"
@@ -115,12 +118,15 @@
                         <el-col :span="6">
                             <el-form-item prop="salary" label="最高月薪" :label-width="labelWidth2">
                                 <el-input type="number" clearable
-                                          v-model="position.salary"/>
+                                          v-model="position.salary"
+                                          placeholder="单位：人民币"
+                                          step="250"/>
                             </el-form-item>
                         </el-col>
                         <el-col :span="6">
                             <el-form-item prop="salaryFloat" label="月薪浮动" :label-width="labelWidth2">
-                                <el-input clearable type="number" v-model="position.salaryFloat"/>
+                                <el-input clearable type="number" v-model="position.salaryFloat" placeholder="单位：人民币"
+                                          step="250"/>
                             </el-form-item>
                         </el-col>
                     </el-row>
@@ -141,24 +147,29 @@
                         </el-col>
                     </el-row>
                 </el-form>
+                <img v-show="control.e_" src="../assets/ChinaMap.jpg"/>
             </el-main>
             <el-footer>
                 <component :is="footerComponent"/>
             </el-footer>
         </el-container>
+
+        <back-top/>
     </div>
 </template>
 
 <script>
     import u_header from "./subComponents/u_header";
     import u_footer from "./subComponents/u_footer";
+    import backTop from "./subComponents/backTop";
     const loginURL = '/isLogged';
     //字符
     const ch = '#';
     export default {
         components: {
             "u_header": u_header,
-            "u_footer":u_footer
+            "u_footer": u_footer,
+            backTop
         },
         name: "e_position",
         mounted() {
@@ -168,8 +179,8 @@
             });
 
             //加载供选择的职位
-            _this.$ajax.get('/getAllTradeTreeRoot').then(function (res) {
-                _this.allTradeTreeRoot = res.data;
+            _this.$ajax.post('/readJSONFile', "allTradeTreeRoot").then(function (res) {
+                _this.positionSelector = res.data;
             });
             //城市选择器
             _this.$ajax.post('/readJSONFile', "city", {emulateJSON: true}).then((res) => {
@@ -177,15 +188,19 @@
             });
 
             //进入该卡片的动作
-            let action = _this.$route.query.action;
-            //传到该页面的数据
-            let tempPosition = JSON.parse(_this.$route.query.position);
+            let action = _this.$route.query.action,
+                tempPosition;
+            //传到该页面的数据！！！
+            if (typeof (_this.$route.query.position) != 'undefined') {
+                tempPosition = JSON.parse(_this.$route.query.position);
+            }
             _this.collected = _this.$route.query.collected;
 
             //企业版 添加职位
             if (action == 'e_add' && typeof (tempPosition) == 'undefined') {
                 _this.control.e_ = true;
                 _this.control.isSee = false;
+                _this.$message({type: 'success', message: '职位名称来自职位枚举表'});
                 console.log('######这是添加态页面，没有要显示的职位');
             } else {
                 console.log('有要显示的职位');
@@ -194,15 +209,16 @@
                 _this.$set(_this.position, 'name', tempPosition.name);
                 _this.$set(_this.position, 'detail', tempPosition.detail);
                 //北京(10)上海(5) -> 北京#上海#
-                let tempCity = tempPosition.city.replace(/\([^\)]*\)/g, "#");
-                let cities = tempCity.split('#');
+                // tempPosition.city.replace(/\([^\)]*\)/g, "#");
+                let cities = tempPosition.city.split('#');
                 let nums = tempPosition.needNum.split('#');
                 console.log('城市数组');
                 console.log(cities);
                 console.log('人数数组');
                 console.log(nums);
                 //删除数组初始的一项
-                _this.cityAndNum.splice(0, 1);
+                // _this.cityAndNum.splice(0, 1);
+                _this.cityAndNum = [];
                 for (let i = 0; i < cities.length - 1; i++) {
                     //初始化变量以解决未定义问题
                     // _this.cityAndNum[i] = {};
@@ -220,6 +236,7 @@
                 _this.$set(_this.position, 'worktype', tempPosition.worktype);
                 _this.$set(_this.position, 'faceto', tempPosition.faceto);
                 _this.$set(_this.position, 'releaseTime', tempPosition.releaseTime);
+                _this.$set(_this.position, 'trade', tempPosition.trade);
                 //企业版浏览态
                 if (action == 'e_see') {
                     _this.control.e_ = true;
@@ -236,8 +253,7 @@
                     if (tempPosition.status == '已发布') {
                         _this.position.status = '1';
                     }
-                }
-                else if (action == 'u_see') {
+                } else if (action == 'u_see') {
                     _this.control.e_ = false;
                     _this.control.isSee = true;
                     //可能要投递的职位
@@ -279,8 +295,8 @@
                 headerComponent: 'u_header',
                 //底部组件
                 footerComponent: 'u_footer',
-                //选择职位名称时 所有行业树根节点
-                allTradeTreeRoot: [],
+                //职位选择器 选择职位名称时
+                positionSelector: {},
                 //城市选择器
                 citySelector: {},
                 //职位 表单数据封装
@@ -318,7 +334,9 @@
                     //公司详情
                     companyInfo: '',
                     //职位发布时间
-                    releaseTime: ''
+                    releaseTime: '',
+                    // 该职位所属行业
+                    trade: ''
                 },
                 //前端数据结构
                 workExp_web: ['不要求', '应届毕业生', '3年及以下', '3-5年', '5-10年', '10年以上'],
@@ -329,7 +347,7 @@
                 //工作地点 该地点需求人数内存前端数据结构
                 cityAndNum: [{
                     //工作地点
-                    city: '',
+                    city: [],
                     //该地点需求人数
                     num: '',
                 }],
@@ -373,11 +391,16 @@
         methods: {
             //选择职位名称 级联选择器选中值变化时触发
             handleChange(value) {
+                let _this = this;
                 console.log(value);
                 //新增的职位名称
-                this.position.name = value[2];
+                _this.position.name = value[value.length - 1];
+                _this.position.trade = '';
+                for (let i = 0; i < value.length - 1; i++) {
+                    _this.position.trade = _this.position.trade + value[i] + '/';
+                }
             },
-            //城市选择器 值变化时
+            //城市选择器 选中值发生变化时
             handleChange2(value) {
                 console.log(value);
             },
@@ -386,29 +409,30 @@
                 let _this = this;
                 _this.$refs[formName].validate((valid) => {
                     if (valid) {
-                        // 职位已发布不能修改
-                        if (
-                            _this.position.status == '1' &&
-                            _this.position.id != '' &&
-                            _this.control.submitButtonInfo == '保存修改'
-                        ) {
-                            _this.$message({
-                                message: '该职位已经发布不能修改',
-                                type: 'error'
-                            });
-                            return;
-                        }
                         _this.position.companyId = _this.users.companyId;
                         _this.position.userId = _this.users.id;
                         // 遍历数组
                         _this.position.city = '';
                         _this.position.needNum = '';
-                        _this.cityAndNum.forEach(item => {
-                            console.log("每个工作地点");
-                            console.log(item);
-                            _this.position.city = _this.position.city + item.city + ch;
-                            _this.position.needNum = _this.position.needNum + item.num + ch;
-                        });
+                        // _this.cityAndNum.forEach(item => {
+                        // });
+                        for (let i = 0; i < _this.cityAndNum.length; i++) {
+                            let oneCity = _this.cityAndNum[i];
+                            console.log("每个工作地点：");
+                            console.log(oneCity);
+                            // 把城市存入数据库即可！！！新增直辖市有问题？？？
+                            let temp;
+                            //如果是字符串
+                            if (typeof (oneCity.city) == 'string') {
+                                temp = oneCity.city;
+                            }
+                            // 如果是数组
+                            if (Object.prototype.toString.call(oneCity.city) == '[object Array]') {
+                                temp = oneCity.city[oneCity.city.length - 1];
+                            }
+                            _this.position.city = _this.position.city + temp + ch;
+                            _this.position.needNum = _this.position.needNum + oneCity.num + ch;
+                        }
                         //这是个小毛病
                         if (_this.position.city == '#') {
                             _this.position.city = '';
@@ -422,24 +446,30 @@
                             return;
                         }
                         //添加/编辑职位
-                        _this.addingPosition = true;
-                        _this.$ajax.post('/savePosition', _this.position, {emulateJSON: true}).then((res) => {
-                            console.log(res.data);
-                            let result = res.data;
-                            if (result.includes('成功')) {
+                        _this.$confirm('确定新增该职位？请认真检查月薪', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(() => {
+                            _this.addingPosition = true;
+                            _this.$ajax.post('/savePosition', _this.position, {emulateJSON: true}).then((res) => {
+                                console.log(res.data);
+                                let result = res.data;
                                 _this.addingPosition = false;
-                                _this.$message({
-                                    showClose: true,
-                                    message: result,
-                                    type: 'success'
-                                });
-                                _this.position = {};
-                                //后退一页
-                                _this.$router.go(-1);
-                            } else {
-                                _this.addingPosition = false;
-                                this.$message.error(result);
-                            }
+                                if (result.includes('成功')) {
+                                    _this.$message({
+                                        showClose: true,
+                                        message: result,
+                                        type: 'success'
+                                    });
+                                    _this.position = {};
+                                    //后退一页
+                                    _this.$router.go(-1);
+                                } else {
+                                    this.$message.error(result);
+                                }
+                            });
+                        }).catch(() => {
                         });
                     } else {
                         console.log('add position fail');
@@ -467,14 +497,23 @@
             //添加一个工作地点
             addCity() {
                 this.cityAndNum.push({
-                    city: '',
+                    city: [],
+                    num: '',
                     key: Date.now()
                 });
             },
             //检查填写的信息
             checkForm: function () {
-                if (this.position.city == '' || this.position.needNum == '') {
-                    this.$message.error('填写工作地点、人数');
+                let _this = this;
+                if (_this.position.city == '' || _this.position.needNum == '') {
+                    _this.$message.error('填写工作地点、人数');
+                    return false;
+                }
+                // 这有可能是字符串 转换一下
+                _this.position.salary = parseInt(_this.position.salary + '');
+                _this.position.salaryFloat = parseInt(_this.position.salaryFloat + '');
+                if (_this.position.salaryFloat >= _this.position.salary) {
+                    _this.$message.error('月薪浮动 >= 最高月薪');
                     return false;
                 }
                 return true;
@@ -505,7 +544,7 @@
                 let _this = this;
                 let job_apply = {userId: _this.users.id, positionId: _this.position.id};
                 if (_this.users == '' || _this.position.id == '') {
-                    _this.$message({type: 'error', message: '请先登录'});
+                    _this.$message({type: 'error', message: '请登录'});
                     return;
                 }
                 _this.$ajax.post('/postResume', job_apply, {emulateJSON: true}).then((res) => {
@@ -520,7 +559,7 @@
                     "positionId": _this.position.id
                 };
                 if (typeof (_this.users.username) == 'undefined') {
-                    _this.$message({type: 'warning', message: '请先登录'});
+                    _this.$message({type: 'error', message: '请登录'});
                     return;
                 }
                 _this.$ajax.post('/collectPosition', map, {emulateJSON: true}).then((res) => {
@@ -532,6 +571,11 @@
 </script>
 
 <style scoped>
+    .title {
+        text-align: right;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
     /*标题*/
     .tit {
         color: darkblue !important;
@@ -542,6 +586,10 @@
         margin-left: auto;
         margin-right: auto;
         background-color: aliceblue;
+    }
+    img {
+        width: 1200px;
+        height: auto;
     }
     .el-form-item,.el-input {
         width: 100%;
@@ -561,5 +609,8 @@
     /*120px是header+footer的高度之和 有变化再改（按实际情况改）*/
     .el-main {
         min-height: calc(100vh - 120px)
+    }
+    .el-cascader {
+        width: 100%;
     }
 </style>

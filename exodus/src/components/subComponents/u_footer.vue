@@ -32,28 +32,18 @@
 </template>
 
 <script>
-    //该请求是验证是否已登录
-    const loginURL = '/isLogged';
     export default {
         name: "footer",
         methods: {
             // 关于我们
             aboutUs() {
-                // 发请求
                 let _this = this;
-                _this.$ajax.post(loginURL, {}, {emulateJSON: true}).then(function (res) {
-                    let backStage = res.data;
-                    if (backStage != '') {
-                        _this.$router.push({path: '/about'});
-                        return;
-                    } else {
-                        _this.$message({
-                            message: '请先登录',
-                            type: 'warning',
-                        });
-                    }
-                });
-            },
+                if (_this.$route.path === '/about') {
+                    _this.$router.go(0);
+                    return;
+                }
+                _this.$router.push({path: '/about'});
+            }
         }
     }
 </script>

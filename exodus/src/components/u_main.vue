@@ -1,5 +1,9 @@
-<!--[求职者主页]也是未登录状态时的默认主页-->
-<!--vue.js 2.0要求每个template只能有一个根元素。可以在最外层包一个div来解决这个问题-->
+<!--
+[求职者主页]也是未登录状态时的默认主页
+vue.js 2.0要求每个template只能有一个根元素。可以在最外层包一个div来解决这个问题
+一个主页，由多个组件组成
+求职者主要对象：职位、公司
+-->
 <template>
     <div>
         <el-container>
@@ -14,12 +18,13 @@
                         <el-carousel v-show="adVisible" :interval="2000" arrow="hover" id="el_carousel" height="400px">
                             <!--关闭广告-->
                             <el-button icon="el-icon-close" id="closeAd" @click="closeAd" title="关闭广告" type="danger" plain/>
+                            <span id="xyhy">再度过些风冷雨春暖在眼前</span>
                             <el-carousel-item v-for="item in adNum" :key="item">
                                 <img :src="require('../assets/ad/'+item+'.jpg')" class="carousel_image_type">
                             </el-carousel-item>
                         </el-carousel>
                     </el-col>
-                    <el-col :span="12">
+                    <el-col :span="12" v-show="false">
                         <ul class="smallImg" v-on:mouseover="pause" v-on:mouseout="start">
                             <li v-for="item in smallAd.length">
                                 <transition name="fade">
@@ -109,11 +114,13 @@
                 if (backStage != '') {
                     console.log('用户已登录');
                     _this.users = backStage;
+                    //这时根据用户类型确定用户的主页 三类用户三类主页，根据cookie加载到对应主页，用户名是唯一键
+                    //未登录时是默认主页，只要跳到了招聘者、管理员主页就一定是已登录了
                     let userType = _this.users.userType;
-                    //这时根据用户类型确定用户的主页
                     //招聘者
                     if (userType == '2') {
                         console.log('招聘者已登录');
+                        //招聘者已登录：跳转页面时携带数据到招聘者主页，然后再向子组件传数据
                         //跳转到招聘者主页并携带数据过去
                         _this.$router.push({path: '/e_main'});
                     }
@@ -222,6 +229,15 @@
         /*border-width: 0px;*/
         /*点击后没边框*/
         /*outline: none;*/
+    }
+    #xyhy {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 2000;
+        font-size: 32px;
+        font-family: "KaiTi";
+        color: #a0cfff;
     }
     .el-carousel__item h3 {
         color: #475669;

@@ -18,10 +18,10 @@
                             <el-menu-item index="3">
                                 企业
                             </el-menu-item>
-                            <el-menu-item index="4" title="更换首页广告">
+                            <el-menu-item index="4" title="更换主页广告图片">
                                 更换广告
                             </el-menu-item>
-                            <el-menu-item index="5" @click="online_count" title="点击刷新">
+                            <el-menu-item index="5" @click="online_count" title="在线人数，点击刷新">
                                 已登录在线用户（{{onlineCount}}）
                             </el-menu-item>
                             <el-submenu index="6">
