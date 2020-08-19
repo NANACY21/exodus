@@ -1,26 +1,53 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="BranchesTreeState">
+    <expand>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="LOCAL_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:dependabot" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:dependabot" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:npm_and_yarn" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+      <path>
+        <item name="ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="REMOTE_ROOT" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:origin" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:dependabot" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:npm_and_yarn" type="e8cecc67:BranchNodeDescriptor" />
+        <item name="GROUP_NODE:exodus" type="e8cecc67:BranchNodeDescriptor" />
+      </path>
+    </expand>
+    <select />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="39315e14-9885-4f78-b005-aeb6bf54cc7d" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/exodus/src/assets/e_data/3.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exodus/src/assets/e_data/4.json" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/exodus/src/assets/e_data/allTradeTreeRoot.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/exodus/src/components/preview_resume.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/assets/e_data/city.json" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/assets/e_data/city.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/about.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/about.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/chat.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/chat.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/e_main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/e_main.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/e_position.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/e_position.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/e_positionList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/e_positionList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/m_main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/m_main.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/exodus/src/components/m_picture.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/m_picture.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/setting.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/setting.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/exodus/src/components/subComponents/positionList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/subComponents/positionList.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/subComponents/u_footer.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/subComponents/u_footer.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/subComponents/u_header.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/subComponents/u_header.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/exodus/src/components/u_main.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/u_main.vue" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/exodus/src/components/u_positionList.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/u_positionList.vue" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/exodus/src/components/u_resume.vue" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/components/u_resume.vue" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/exodus/src/router/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/exodus/src/router/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,19 +90,19 @@
   <component name="ProjectId" id="1V48VXP9jWQ2EwYs6s0Nsj0cIyl" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showExcludedFiles" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1570028148203" />
     <property name="editor.config.ad.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/exodus/src/assets/e_data" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="list.type.of.created.stylesheet" value="CSS" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -83,7 +110,7 @@
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
-    <property name="settings.editor.selected.configurable" value="reference.settingsdialog.IDE.editor.colors.Color Scheme Font" />
+    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.web.browsers" />
     <property name="ts.external.directory.path" value="D:\IntelliJ IDEA 2019.3\plugins\JavaScriptLanguage\jsLanguageServicesImpl\external" />
   </component>
   <component name="RecentsManager">
@@ -93,18 +120,6 @@
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\allproject\exodus\exodus\src\api" />
     </key>
-  </component>
-  <component name="ServiceViewManager">
-    <option name="viewStates">
-      <list>
-        <serviceView>
-          <treeState>
-            <expand />
-            <select />
-          </treeState>
-        </serviceView>
-      </list>
-    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -289,7 +304,29 @@
       <workItem from="1588743817682" duration="1655000" />
       <workItem from="1588991598905" duration="3707000" />
       <workItem from="1589250228303" duration="5680000" />
-      <workItem from="1589339313024" duration="344000" />
+      <workItem from="1589339313024" duration="1766000" />
+      <workItem from="1589427536380" duration="933000" />
+      <workItem from="1589625944149" duration="846000" />
+      <workItem from="1589705261576" duration="1542000" />
+      <workItem from="1589767966081" duration="2147000" />
+      <workItem from="1590932526084" duration="1387000" />
+      <workItem from="1592127858758" duration="1837000" />
+      <workItem from="1592303778836" duration="872000" />
+      <workItem from="1592304740274" duration="1997000" />
+      <workItem from="1592307809460" duration="2728000" />
+      <workItem from="1592360002276" duration="12168000" />
+      <workItem from="1592449141124" duration="12554000" />
+      <workItem from="1592530642869" duration="23910000" />
+      <workItem from="1592645701298" duration="9591000" />
+      <workItem from="1592710313351" duration="3613000" />
+      <workItem from="1592793685283" duration="7236000" />
+      <workItem from="1593005407123" duration="1194000" />
+      <workItem from="1593255104382" duration="771000" />
+      <workItem from="1595087130272" duration="682000" />
+      <workItem from="1595250979217" duration="267000" />
+      <workItem from="1596808807255" duration="722000" />
+      <workItem from="1597369840724" duration="3000" />
+      <workItem from="1597486205776" duration="99000" />
     </task>
     <task id="LOCAL-00001" summary="2020-02-26 exodus完成了一部分了">
       <created>1582729842402</created>
@@ -312,51 +349,75 @@
       <option name="project" value="LOCAL" />
       <updated>1587623222376</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="2020-05-13 前端 也该告一段落">
+      <created>1589339843567</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1589339843567</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
-    <option name="version" value="1" />
+    <option name="version" value="2" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="2020-02-26 exodus完成了一部分了" />
     <MESSAGE value="2020-04-13 求职网站前端已完成，现在要做的：增强搜索、消息功能" />
     <MESSAGE value="2020-04-23 修复了前端大量的bug" />
-    <option name="LAST_COMMIT_MESSAGE" value="2020-04-23 修复了前端大量的bug" />
+    <MESSAGE value="2020-05-13 前端 也该告一段落" />
+    <option name="LAST_COMMIT_MESSAGE" value="2020-05-13 前端 也该告一段落" />
   </component>
   <component name="WindowStateProjectService">
+    <state x="435" y="139" key="#HTTP_Proxy" timestamp="1592306521167">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
+    <state x="435" y="139" key="#HTTP_Proxy/0.0.1536.824@0.0.1536.824" timestamp="1592306521167" />
     <state x="223" y="70" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586868385761">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="223" y="70" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1586868385761" />
-    <state x="385" y="7" key="CommitChangelistDialog2" timestamp="1587623220329">
+    <state x="385" y="7" key="CommitChangelistDialog2" timestamp="1589339840502">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="385" y="7" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1587623220329" />
-    <state x="166" y="66" key="SettingsEditor" timestamp="1584269193639">
+    <state x="385" y="7" key="CommitChangelistDialog2/0.0.1536.824@0.0.1536.824" timestamp="1589339840502" />
+    <state x="166" y="66" key="SettingsEditor" timestamp="1592309975206">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="166" y="66" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1584269193639" />
-    <state x="361" y="148" key="Vcs.Push.Dialog.v2" timestamp="1587623233680">
+    <state x="166" y="66" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1592309975206" />
+    <state x="361" y="148" key="Vcs.Push.Dialog.v2" timestamp="1589339855470">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="361" y="148" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1587623233680" />
+    <state x="361" y="148" key="Vcs.Push.Dialog.v2/0.0.1536.824@0.0.1536.824" timestamp="1589339855470" />
     <state x="502" y="219" key="com.intellij.ide.util.TipDialog" timestamp="1588743845215">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="502" y="219" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1588743845215" />
-    <state x="209" y="119" width="1012" height="610" key="find.popup" timestamp="1589002156198">
+    <state x="367" y="20" width="1012" height="804" key="find.popup" timestamp="1592747272373">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="209" y="119" width="1012" height="610" key="find.popup/0.0.1536.824@0.0.1536.824" timestamp="1589002156198" />
+    <state x="367" y="20" width="1012" height="804" key="find.popup/0.0.1536.824@0.0.1536.824" timestamp="1592747272373" />
     <state x="425" y="187" key="run.anything.popup" timestamp="1586781950588">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="425" y="187" key="run.anything.popup/0.0.1536.824@0.0.1536.824" timestamp="1586781950588" />
-    <state x="385" y="178" width="672" height="678" key="search.everywhere.popup" timestamp="1589273168762">
+    <state x="385" y="178" width="672" height="678" key="search.everywhere.popup" timestamp="1593255245649">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
-    <state x="385" y="178" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1589273168762" />
+    <state x="385" y="178" width="672" height="678" key="search.everywhere.popup/0.0.1536.824@0.0.1536.824" timestamp="1593255245649" />
   </component>
   <component name="masterDetails">
     <states>

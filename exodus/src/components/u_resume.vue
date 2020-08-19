@@ -51,6 +51,10 @@
                                 <i class="el-icon-download"/>
                                 <span slot="title">导出简历</span>
                             </el-menu-item>
+                            <el-menu-item index="7" @click="previewResume" title="预览简历">
+                                <i class="el-icon-view"/>
+                                <span slot="title">预览简历</span>
+                            </el-menu-item>
                         </el-menu>
                     </div>
                 </el-aside>
@@ -80,7 +84,7 @@
                                 </el-form-item>
                             </el-col>
                             <el-col :span="4">
-                                <el-form-item prop="sex" label="性别" :label-width="labelWidth1">
+                                <el-form-item prop="sex" label="性别" :label-width="labelWidth1" :title="'性别：'+resume.sex">
                                     <el-radio-group v-model="resume.sex">
                                         <el-radio-button label="男"/>
                                         <el-radio-button label="女"/>
@@ -154,7 +158,7 @@
                     <el-row>
                         <el-col :span="24">
                             <el-tabs v-model="edu_expCurrentIndex" type="card" closable @tab-remove="removeEdu_exp">
-                                <el-tab-pane v-for="(item, index) in edu_expList" :key="index" :label="'教育经历'+index" :name="index">
+                                <el-tab-pane v-for="(item, index) in edu_expList" :key="index" :label="'教育经历'+(index+1)" :name="index">
                                     <el-form :model="item" :rules="edu_expRule" ref="edu_exp" :disabled="!item.canEdit">
                                         <el-row>
                                             <el-col :span="6">
@@ -241,12 +245,12 @@
                     <el-row>
                         <el-col :span="24">
                             <el-tabs v-model="project_expCurrentIndex" type="card" closable @tab-remove="removeProject_exp">
-                                <el-tab-pane v-for="(item, index) in project_expList" :key="index" :label="'项目经历'+index" :name="index">
+                                <el-tab-pane v-for="(item, index) in project_expList" :key="index" :label="'项目经历'+(index+1)" :name="index">
                                     <el-form :model="item" ref="project_exp" :rules="project_expRule" :disabled="!item.canEdit">
                                         <el-row>
                                             <el-col :span="6">
                                                 <el-form-item prop="name" label="项目名称" :label-width="labelWidth2">
-                                                    <el-input clearable v-model="item.name" placeholder="项目名称"/>
+                                                    <el-input clearable v-model="item.name" placeholder="项目名称" :title="item.name"/>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
@@ -279,12 +283,12 @@
                     <el-row>
                         <el-col :span="24">
                             <el-tabs v-model="work_expCurrentIndex" type="card" closable @tab-remove="removeWork_exp">
-                                <el-tab-pane v-for="(item, index) in work_expList" :key="index" :label="'工作经历'+index" :name="index">
+                                <el-tab-pane v-for="(item, index) in work_expList" :key="index" :label="'工作经历'+(index+1)" :name="index">
                                     <el-form :model="item" :rules="work_expRule" ref="work_exp" :disabled="!item.canEdit">
                                         <el-row>
                                             <el-col :span="6">
                                                 <el-form-item prop="company" label="公司名称" :label-width="labelWidth2">
-                                                    <el-input clearable v-model="item.company" placeholder="公司名称"/>
+                                                    <el-input clearable v-model="item.company" placeholder="公司名称" :title="item.company"/>
                                                 </el-form-item>
                                             </el-col>
                                             <el-col :span="6">
@@ -386,8 +390,8 @@
                 if (backStage == '') {
                     _this.$router.push('/');
                     _this.$message({
-                        message: '请先登录',
-                        type: 'warning'
+                        message: '请登录',
+                        type: 'error'
                     });
                     return;
                 }
@@ -1013,6 +1017,23 @@
             goAppointForm(formId) {
                 console.log(formId);
                 document.querySelector(formId).scrollIntoView(true);
+            },
+            //预览简历
+            previewResume() {
+                let _this = this;
+                // 跳转页面携带大量数据时
+                // https://www.cnblogs.com/lishanlei/p/9769507.html
+                _this.$router.push({
+                    name: 'preview_resume',
+                    params: {
+                        resume: _this.resume,
+                        edu_expList: _this.edu_expList,
+                        project_expList: _this.project_expList,
+                        work_expList: _this.work_expList,
+                        imageUrl: _this.imageUrl,
+                        age: _this.resume.age_web
+                    }
+                });
             },
             // 清空指定表单
             resetForm(formData, ref) {

@@ -20,6 +20,8 @@ import chat from "../components/chat";
 import u_positionList from "../components/u_positionList";
 import myCollect from "../components/myCollect";
 import m_picture from "../components/m_picture";
+//简历预览页面
+import preview_resume from "../components/preview_resume";
 Vue.use(Router);
 
 export default new Router({
@@ -125,6 +127,11 @@ export default new Router({
             path: '/m_picture',
             name: 'm_picture',
             component: m_picture
+        },
+        {
+            path: '/preview_resume',
+            name: 'preview_resume',
+            component: preview_resume
         }
     ]
 });

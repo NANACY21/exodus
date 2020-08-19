@@ -274,6 +274,14 @@
                 }
                 _this.$ajax.post('/collectPosition', map, {emulateJSON: true}).then((res) => {
                     _this.$message({type: 'success', message: res.data});
+                    //前端更新收藏状态
+                    //该职位id在收藏职位id列表中的索引
+                    let number = _this.collectPositionIdList.indexOf(positionId);
+                    if (number > -1) {
+                        _this.collectPositionIdList.splice(number, 1);
+                    } else {
+                        _this.collectPositionIdList.push(positionId);
+                    }
                 });
             },
 

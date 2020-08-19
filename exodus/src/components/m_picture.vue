@@ -16,7 +16,7 @@
         data() {
             return {
                 jumpTo: 0,
-                item: 492
+                item: 950
             };
         },
         methods: {

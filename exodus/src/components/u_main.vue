@@ -18,13 +18,13 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
                         <el-carousel v-show="adVisible" :interval="2000" arrow="hover" id="el_carousel" height="400px">
                             <!--关闭广告-->
                             <el-button icon="el-icon-close" id="closeAd" @click="closeAd" title="关闭广告" type="danger" plain/>
-                            <span id="xyhy">再度过些风冷雨春暖在眼前</span>
+                            <span id="xyhy">坚毅</span>
                             <el-carousel-item v-for="item in adNum" :key="item">
                                 <img :src="require('../assets/ad/'+item+'.jpg')" class="carousel_image_type">
                             </el-carousel-item>
                         </el-carousel>
                     </el-col>
-                    <el-col :span="12" v-show="false">
+                    <el-col :span="12">
                         <ul class="smallImg" v-on:mouseover="pause" v-on:mouseout="start">
                             <li v-for="item in smallAd.length">
                                 <transition name="fade">
