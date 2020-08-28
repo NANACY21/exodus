@@ -1,6 +1,6 @@
 <!--[通用页面头部子组件]-->
 <template>
-    <div>
+    <div class="u_header">
         <el-row>
             <el-col :span="10" style="text-align: left">
                 <div class="grid-content bg-purple">
@@ -240,6 +240,9 @@
 </script>
 
 <style lang="scss">
+    .u_header {
+        background-color: aliceblue;
+    }
     /*栅格布局*/
     .el-row,.el-col {
         margin-top: 0px;

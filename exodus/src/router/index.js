@@ -22,6 +22,10 @@ import myCollect from "../components/myCollect";
 import m_picture from "../components/m_picture";
 //简历预览页面
 import preview_resume from "../components/preview_resume";
+//秒杀活动列表
+import e_seckilllist from "../components/e_seckilllist";
+//秒杀活动卡片
+import e_seckill from "../components/e_seckill";
 Vue.use(Router);
 
 export default new Router({
@@ -132,6 +136,16 @@ export default new Router({
             path: '/preview_resume',
             name: 'preview_resume',
             component: preview_resume
+        },
+        {
+            path: '/e_seckilllist',
+            name: 'e_seckilllist',
+            component: e_seckilllist
+        },
+        {
+            path: '/e_seckill',
+            name: 'e_seckill',
+            component: e_seckill
         }
     ]
 });

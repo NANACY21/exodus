@@ -34,6 +34,11 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
                         </ul>
                     </el-col>
                 </el-row>
+                <!--促销活动 限时秒杀-->
+                <div id="promotion">
+                    <h1>今日秒杀</h1>
+                </div>
+
                 <!--职位列表-->
                 <el-tabs v-model="positionCurrentTab" @tab-click="changePositionTab" >
                     <el-tab-pane name="first">
@@ -309,5 +314,17 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
     }
     .fade-enter, .fade-leave-to /* .fade-leave-active below version 2.1.8 */ {
         opacity: 0;
+    }
+
+    /*秒杀促销*/
+    #promotion {
+        width: 1100px;
+        height: 500px;
+        margin: 20px auto 20px auto;
+        background-color: hotpink;
+        border-radius: 20px;
+    }
+    #promotion h1 {
+        color: #7bff97;
     }
 </style>

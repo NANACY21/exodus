@@ -29,7 +29,7 @@
                     </el-menu>
                 </el-aside>
                 <el-main>
-                    <el-form :model="users">
+                    <el-form :model="users" :rules="usersRule" ref="users_ref">
                         <el-row>
                             <el-col :span="11">
                                 <el-form-item>
@@ -65,7 +65,7 @@
                             </el-col>
                             <el-col v-show="newPasswordVisible" :span="6">
                                 <el-form-item prop="newPassword" label="新密码" :label-width="labelWidth2">
-                                    <el-input v-model="users.newPassword" type="password" placeholder="新密码" clearable/>
+                                    <el-input v-model="users.newPassword" type="password" placeholder="包含字母、数字" clearable/>
                                 </el-form-item>
                             </el-col>
                             <el-col v-show="newPasswordVisible" :span="6">
@@ -126,6 +126,15 @@
                     loginMode: '1',
                     usernameCanEdit: false,
                     passwordCanEdit: false,
+                },
+                //该页面数据校验
+                usersRule: {
+                    username: [
+                        {required: true, message: '输入用户名', trigger: 'blur'}
+                    ],
+                    password: [
+                        {required: true, message: '输入密码', trigger: 'blur'}
+                    ]
                 },
                 //头部组件
                 headerComponent: 'u_header',
@@ -197,26 +206,33 @@
             // 确认修改 url 标题
             confirmSubmit(url, hint) {
                 let _this = this;
-                _this.$confirm('确认修改' + hint + '？', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(() => {
-                    _this.$ajax.post(url, this.users, {emulateJSON: true}).then((res) => {
+                _this.$refs['users_ref'].validate((valid) => {
+                    if (!valid) {
+                        // 不采取前端校验 让后端校验
+                        // return;
+                    }
+
+                    _this.$confirm('确认修改' + hint + '？', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+                        _this.$ajax.post(url, this.users, {emulateJSON: true}).then((res) => {
+                            _this.$message({
+                                type: 'info',
+                                message: res.data
+                            });
+                            if (hint == '用户名') {
+                                _this.changeUn();
+                            } else if (hint == '密码') {
+                                _this.changePw();
+                            }
+                        });
+                    }).catch(() => {
                         _this.$message({
                             type: 'info',
-                            message: res.data
+                            message: '已取消修改'
                         });
-                        if (hint == '用户名') {
-                            _this.changeUn();
-                        } else if (hint == '密码') {
-                            _this.changePw();
-                        }
-                    });
-                }).catch(() => {
-                    _this.$message({
-                        type: 'info',
-                        message: '已取消修改'
                     });
                 });
             }
