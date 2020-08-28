@@ -407,6 +407,7 @@
                                     message: result,
                                     type: 'success',
                                 });
+
                                 if (result.includes('登录') || result.includes('密码重置')) {
                                     _this.loginVisible = false;
                                     _this.loginForm = {};
