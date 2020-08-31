@@ -381,6 +381,27 @@
                 _this.clientHeight = document.documentElement.clientHeight;
             };
         },
+        //关闭简历提示 vue 后退路由时提示
+        // https://www.jb51.net/article/130010.htm
+        // https://blog.csdn.net/liyi_mowu/article/details/85335362?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.add_param_isCf&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.add_param_isCf
+        beforeRouteLeave: function (to, from, next) {
+            //防止url变化
+            next(false)
+            setTimeout(() => {
+                this.$confirm('简历数据未保存，关闭页面数据会丢失，确定关闭页面？', '提示', {
+                    distinguishCancelAndClose: true,
+                    confirmButtonText: '确定',
+                    cancelButtonText: '留下',
+                    type: 'warning'
+                }).then(() => {
+                    next()
+                }).catch(() => {
+                    next(false)
+                });
+            }, 200)
+
+        },
+
 
         // html加载完成之前，执行。执行顺序：父组件-子组件
         created() {

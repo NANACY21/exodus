@@ -329,8 +329,11 @@
                 let _this = this;
                 console.log(command.id);
                 console.log(command.name);
+                //请求参数 职位id 返回职位对象
                 _this.$ajax.post('/getPositionById', command.id, {emulateJSON: true}).then((res) => {
-                    _this.$router.push({path: '/e_position', query: {position: res.data, action: 'e_see'}});
+                    //职位对象 -> json字符串
+                    let s = JSON.stringify(res.data);
+                    _this.$router.push({path: '/e_position', query: {position: s, action: 'e_see'}});
                 });
             },
             //查询某个人在本公司投递的职位
