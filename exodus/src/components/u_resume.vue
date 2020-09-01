@@ -171,7 +171,16 @@
                                             </el-col>
                                             <el-col :span="6">
                                                 <el-form-item prop="school" label="学校名称" :label-width="labelWidth2">
-                                                    <el-input clearable v-model="item.school" placeholder="学校名称"/>
+                                                    <el-autocomplete
+                                                        clearable
+                                                        prop="school"
+                                                        placeholder="学校名称"
+                                                        v-model.trim="item.school"
+                                                        ref="school"
+                                                        :fetch-suggestions="querySearch"
+                                                        @select="handleSelect"
+                                                        :trigger-on-focus="false">
+                                                    </el-autocomplete>
                                                 </el-form-item>
                                             </el-col>
                                             <el-col :span="6">
@@ -380,6 +389,11 @@
             window.onresize = function temp() {
                 _this.clientHeight = document.documentElement.clientHeight;
             };
+
+            //加载供选择的职位
+            _this.$ajax.post('/readJSONFile', "university").then(function (res) {
+                _this.universityList = res.data;
+            });
         },
         //关闭简历提示 vue 后退路由时提示
         // https://www.jb51.net/article/130010.htm
@@ -812,7 +826,9 @@
                     //详情
                     detail: [{required: true, message: '详情', trigger: 'blur'}]
                 },
-                worktype_web: ['工作', '实习']
+                worktype_web: ['工作', '实习'],
+                //大学列表
+                universityList: []
             };
         },
         methods: {
@@ -1177,6 +1193,30 @@
                 var d3 = new Date(split_d1[0], split_d1[1], split_d1[2]);
                 //把相差的毫秒数转换为天数
                 return parseInt(Math.abs(d2 - d3) / 1000 / 60 / 60 / 24);
+            },
+
+
+            //[教育经历 选择学校相关]
+            //大学名称匹配相关 该函数 点击教育经历 学校 触发
+            querySearch(queryString, cb) {
+                let _this = this;
+                var universityList = _this.universityList;
+                console.log(queryString);
+                var results = queryString ? universityList.filter(_this.createFilter(queryString)) : universityList;
+                // 调用 callback 返回建议列表的数据
+                cb(results);
+            },
+            createFilter(queryString) {
+                return (universityLi) => {
+                    return (universityLi.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+                };
+            },
+
+            //选择一个学校
+            handleSelect(item) {
+                //多此一举 会自动这样的
+                // this.school = item.value;
+                this.$refs.school.focus();
             }
         }
     }
