@@ -18,7 +18,7 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
                         <el-carousel v-show="adVisible" :interval="2000" arrow="hover" id="el_carousel" height="400px">
                             <!--关闭广告-->
                             <el-button icon="el-icon-close" id="closeAd" @click="closeAd" title="关闭广告" type="danger" plain/>
-                            <span id="xyhy">坚毅</span>
+                            <span id="xyhy">坚毅 学习新技术、日语</span>
                             <el-carousel-item v-for="item in adNum" :key="item">
                                 <img :src="require('../assets/ad/'+item+'.jpg')" class="carousel_image_type">
                             </el-carousel-item>
@@ -34,6 +34,19 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
                         </ul>
                     </el-col>
                 </el-row>
+
+                <div id="bill">
+                    <!--账单相关 就这一个元素-->
+                    <el-cascader
+                        title="净收入=总收入-总支出。支付/收入渠道：微信 友空间 支付宝"
+                        placeholder="选择某年某月以显示该月账单"
+                        filterable
+                        v-model="billSelectedMonth"
+                        :options="billSelector"
+                        :props="{ expandTrigger: 'hover' }"
+                        @change="afterBillSelectorChange"
+                        clearable/>
+                </div>
                 <!--促销活动 限时秒杀-->
                 <div id="promotion">
                     <h1>今日秒杀</h1>
@@ -143,6 +156,8 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
             _this.convertSmallAd();
             // 每隔6秒执行一遍函数
             _this.timer = setInterval(_this.convertSmallAd, 6000);
+            //页面加载时 加载 账单 级联选择器年月显示项
+            _this.getBillDate();
         },
         data() {
             return {
@@ -174,7 +189,17 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
                 //当前公司标签页
                 companyCurrentTab: 'first',
                 // 小广告图片
-                smallAd: [5, 6, 7, 8]
+                smallAd: [5, 6, 7, 8],
+                //总收入 弹框对象
+                income: null,
+                //总支出 弹框对象
+                pay: null,
+                //净收入 弹框对象
+                NetIncome: null,
+                //账单 级联选择器的年月显示项
+                billSelector: [],
+                //账单 级联选择器 选中的值
+                billSelectedMonth: ''
             };
         },
 
@@ -214,6 +239,60 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
             start() {
                 //每隔6秒换一次图片
                 this.timer = setInterval(this.convertSmallAd, 6000);
+            },
+            //账单 加载级联选择器年月显示项
+            getBillDate() {
+                let _this = this;
+                _this.$ajax.post('/getBillDate', {}, {emulateJSON: true}).then(function (res) {
+                    let backstage = res.data;
+                    _this.billSelector = backstage;
+                });
+            },
+            //选择账单月份 级联选择器选中值变化时触发---
+            afterBillSelectorChange(value) {
+                let _this = this;
+                console.log(value);
+                let yearmonth = '';
+                for (let i = 0; i < value.length; i++) {
+                    yearmonth = yearmonth + value[i];
+                }
+                _this.readBill(yearmonth);
+            },
+            //读取账单 参数：json数组
+            readBill(yearmonth) {
+                let _this = this;
+                let unit = '元';
+                let split = new Array();
+                if (_this.income != null) {
+                    _this.income.close();
+                    _this.pay.close();
+                    _this.NetIncome.close();
+                }
+                _this.$ajax.post('/readBill', yearmonth, {emulateJSON: true}).then(function (res) {
+                    let backstage = res.data;
+                    split = backstage.split('#');
+                    _this.income = _this.$notify({
+                        title: '总收入',
+                        message: split[0] + unit,
+                        type: 'warning',
+                        duration: 0,
+                        offset: 80,
+                    });
+                    _this.pay = _this.$notify({
+                        title: '总支出',
+                        message: split[1] + unit,
+                        type: 'error',
+                        duration: 0,
+                        offset: 160,
+                    });
+                    _this.NetIncome = _this.$notify({
+                        title: '净收入',
+                        message: split[2] + unit,
+                        type: 'success',
+                        duration: 0,
+                        offset: 240,
+                    });
+                });
             }
         }
     };
@@ -318,7 +397,7 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
 
     /*秒杀促销*/
     #promotion {
-        width: 1100px;
+        width: 95%;
         height: 500px;
         margin: 20px auto 20px auto;
         background-color: hotpink;
@@ -326,5 +405,8 @@ vue.js 2.0要求每个template只能有一个根元素。可以在最外层包�
     }
     #promotion h1 {
         color: #7bff97;
+    }
+    #bill {
+        width: 300px;
     }
 </style>
